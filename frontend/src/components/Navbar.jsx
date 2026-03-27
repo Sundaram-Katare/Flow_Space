@@ -1,0 +1,23 @@
+
+export default function Navbar() {
+    return (
+        <>
+         <nav className="flex justify-between items-center py-4 text-black font-inter">
+            <div className="flex items-center text-4xl font-bold">
+               FlowSpace
+            </div>
+
+            <div className="flex justify-center space-x-8 text-xl font-semibold items-center">
+               <h2>Features</h2>
+               <h2>Tasks</h2>
+               <h2>Integrations</h2>
+               <h2>Signup</h2>
+
+               <button className="bg-red-500 cursor-pointer text-white rounded px-2 py-1">
+                Get Started
+               </button>
+            </div>
+         </nav>
+        </>
+    )
+}

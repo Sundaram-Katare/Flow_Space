@@ -6,11 +6,13 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <div className="bg-[url('/homeBG.png')]">
+         <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
       </BrowserRouter>
+      </div>
     </>
   )
 }
