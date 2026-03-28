@@ -1,4 +1,5 @@
-const express = require('express');
+import express from 'express'
+import {env} from './config/env.js';
 
 const app = express();
 
