@@ -13,7 +13,7 @@ export const createWorkspace = async (req, res) => {
             [name, owner_id, invite_code]
         );
 
-        return res.status(200).json({ message: "Workspace created successfully", newWorkspace});
+        return res.status(200).json({ message: "Workspace created successfully", newWorkspace: newWorkspace[0] });
 
     } catch (err) {
         return res.status(500).json({ message: "Error in creating workspace", err });
