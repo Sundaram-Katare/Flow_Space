@@ -109,4 +109,19 @@ export const joinWorkspace = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: "Error Joining Workspace", err });
     }
+};
+
+export const getAllMemebersOfWorkspace = async (req, res) => {
+    try {
+      const {id: w_id} = req.params;
+
+      const members = await pool.query(`
+         SELECT * FROM workspace_members
+         WHERE workspace_id = $1
+        `, [w_id]);
+
+      return res.status(200).json({ message: "Fetched all members successfully", members: members.rows });  
+    } catch (err) {
+        return res.status(500).json({ message: "Error Fetching members of a workspace", err });
+    }
 }
