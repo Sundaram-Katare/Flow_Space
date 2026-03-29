@@ -5,9 +5,9 @@ import { ArrowRight, ArrowRightIcon } from 'lucide-react';
 const sentence = "Manage tasks, chat with your team, and track progress all in one place.";
 
 const charVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-  delay: 0.6
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+    delay: 0.6
 };
 
 
@@ -42,36 +42,36 @@ export default function Home() {
                             </div>
 
                             <div className="flex">
-                                    <motion.h1 className="font-poppins text-6xl font-semibold"
-                                        initial={{ opacity: 0, x: 5 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.8, ease: easeInOut, delay: 0.6 }}
-                                    >
-                                        Finally
-                                    </motion.h1>
+                                <motion.h1 className="font-poppins text-6xl font-semibold"
+                                    initial={{ opacity: 0, x: 5 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.8, ease: easeInOut, delay: 0.6 }}
+                                >
+                                    Finally
+                                </motion.h1>
 
-                                    <motion.h1 className="font-poppins text-6xl font-semibold"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 5 }}
-                                        transition={{ duration: 0.8, ease: easeInOut }}>
-                                        in Sync
-                                    </motion.h1>
-                                </div>
+                                <motion.h1 className="font-poppins text-6xl font-semibold"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 5 }}
+                                    transition={{ duration: 0.8, ease: easeInOut }}>
+                                    in Sync
+                                </motion.h1>
+                            </div>
                         </div>
 
                         <motion.div className="flex-0 flex justify-center" delay="2.6" >
                             <div className="flex items-center justify-center">
                                 <div>
-                                    <motion.button 
-                                      className="flex px-2 py-2 text-2xl rounded-md text-white bg-blue-800"
-                                       initial={{ opacity: 0, scale: 0.1 }}
-                                             animate={{ opacity: 1, scale: 1 }}
-                                             transition={{ duration: 0.6, delay: 0.8 }}
+                                    <motion.button
+                                        className="flex px-2 py-2 text-2xl rounded-md text-white bg-blue-800"
+                                        initial={{ opacity: 0, scale: 0.1 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.6, delay: 0.8 }}
                                     >
                                         Create Your Workspace
 
                                         <div className="flex items-center justify-center rounded bg-white text-black px-1 ml-1">
-                                          <ArrowRightIcon />
+                                            <ArrowRightIcon />
                                         </div>
                                     </motion.button>
                                 </div>
@@ -80,27 +80,27 @@ export default function Home() {
                     </div>
 
                     <motion.p
-        className="text-xl text-black text-center"
-        initial="hidden"
-        animate="visible"
-        transition={{ staggerChildren: 0.05, delay: 0.6 }} // controls speed
-      >
-        {sentence.split("").map((char, index) => (
-          <motion.span key={index} variants={charVariants}>
-            {char}
-          </motion.span>
-        ))}
-      </motion.p>
+                        className="text-xl text-black text-center"
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ staggerChildren: 0.05, delay: 0.6 }} // controls speed
+                    >
+                        {sentence.split("").map((char, index) => (
+                            <motion.span key={index} variants={charVariants}>
+                                {char}
+                            </motion.span>
+                        ))}
+                    </motion.p>
 
 
                     <div className="relative py-12">
                         <div className=" grid grid-cols-2 gap-16 px-4">
                             <div className="rounded-md">
                                 <motion.img
-                                    initial={{ scale: 1 }}
-                                    animate={{ scale: [1, 1.1, 1] }}   // grows then shrinks
+                                    initial={{ opacity: 1,  scale: 1,  }}
+                                    animate={{ rotate: [-20, -10, -20], opacity: 1, scale: 1 }} 
                                     transition={{
-                                        duration: 2,
+                                        duration: 4,
                                         repeat: Infinity,
                                         ease: "easeInOut"
                                     }}
@@ -110,25 +110,17 @@ export default function Home() {
 
                             <div className="rounded-md relative">
                                 <motion.img
-                                    initial={{ scale: 1 }}
-                                    animate={{ scale: [1.1, 1, 1.1] }} // shrinks when other grows
+                                    initial={{ opacity: 1,  scale: 1,  }}
+                                    animate={{ rotate: [20, 10, 20], opacity: 1, scale: 1 }} 
                                     transition={{
-                                        duration: 2,
+                                        duration: 4,
                                         repeat: Infinity,
                                         ease: "easeInOut"
                                     }}
+
                                     src="/featureImg1.png" alt="" className="rounded-md border border-4 border-4-white" />
-
-                                <img src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyaWNrMHRvb2RtazB4NjBjMjZxZHgxYmVzZmlwZTFpcHgzMG13dXdlNyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/Lqo3UBlXeHwZDoebKX/source.gif"
-                                    className="absolute inset-0 left-64 top-36 h-36"
-                                    alt="" />
                             </div>
 
-                            <div className="absolute inset-0 flex justify-center h-12">
-                                <button className="text-white px-2 py-1 rounded-md bg-blue-600 text-3xl">
-                                    Get Started
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
