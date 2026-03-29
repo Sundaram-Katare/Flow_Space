@@ -70,7 +70,7 @@ export const getWorkspaceInviteCode = async (req, res) => {
         WHERE id = $1
         `, [w_id]);
 
-        return res.status(200).json({ message: "Invite Code Fetched successfully", code });
+        return res.status(200).json({ message: "Invite Code Fetched successfully", code: code.rows[0].invite_code });
     } catch (err) {
         return res.status(500).json({ message: "Error Getting Invite Code", err });
     }

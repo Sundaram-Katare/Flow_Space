@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/create", authMiddleware, createWorkspace);
 router.patch("/name/:id", authMiddleware, updateWorkspaceName);
-router.get("/code", authMiddleware, getWorkspaceInviteCode);
+router.get("/:id", authMiddleware, getWorkspaceInviteCode);
 
 export default router;
