@@ -74,4 +74,6 @@ export const getWorkspaceInviteCode = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: "Error Getting Invite Code", err });
     }
-}
+};
+
+// export const joinWorkspace 
