@@ -8,6 +8,6 @@ router.post("/create", authMiddleware, createWorkspace);
 router.patch("/name/:id", authMiddleware, updateWorkspaceName);
 router.get("/:id", authMiddleware, getWorkspaceInviteCode);
 router.post("/join", authMiddleware, joinWorkspace);
-router.get("/members", authMiddleware, getAllMemebersOfWorkspace);
+router.get("/members/:id", authMiddleware, getAllMemebersOfWorkspace);
 
 export default router;
