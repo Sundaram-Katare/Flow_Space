@@ -1,7 +1,4 @@
 import pool from "../db/db.js";
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export const createUserTable = async () => {
   try {
@@ -15,10 +12,23 @@ export const createUserTable = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log("Table Created");
+    console.log("Users Table Created Successfully");
   } catch (err) {
-    console.log("Error Creating Tables:", err);
+    console.log("Error Creating Users Table:", err);
+    throw err;
   }
 };
 
-createUserTable();
+
+export const updateTable = async () => {
+  try {
+    await pool.query(
+      `ALTER TABLE users
+       ADD COLUMN status VARCHAR(20)
+      `
+    )
+  } catch (err) {
+    console.log("Error Updating Table", err);
+    throw err;
+  }
+}
