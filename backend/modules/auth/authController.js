@@ -1,5 +1,6 @@
 import pool from "../../db/db.js";
 import bcrypt from 'bcryptjs';
+import generateToken from "../../services/jwt.js";
 
 export default registerUser = async (req, res) => {
     try {
@@ -19,7 +20,9 @@ export default registerUser = async (req, res) => {
 
         const newUser = await pool.query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *`, [name, email, hashedPassword]);
 
-        return res.status(201).json({ message: "User Registered Successfully", user: newUser.rows[0] });
+        const token = generateToken(newUser.rows[0]);
+
+        return res.status(201).json({ message: "User Registered Successfully", user: newUser.rows[0], token });
     } catch (err) {
         return res.status(500).json({ message: "Error Registering User", err });
     }

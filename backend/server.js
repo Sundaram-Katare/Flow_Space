@@ -1,6 +1,7 @@
 import express from 'express';
 import pool from './db/db.js';
 import { env } from './config/env.js';
+import authRoutes from './modules/auth/authRoutes.js';
 
 const app = express();
 
@@ -11,6 +12,10 @@ app.use(express.json());
 pool.connect()
     .then(() => console.log('Connected to Neon DB'))
     .catch(() => console.log('Failed to connect with the Database'));
+
+
+
+app.use('/api/auth', authRoutes);    
 
 
 app.listen(5000, () => {
