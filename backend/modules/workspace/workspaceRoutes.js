@@ -5,6 +5,6 @@ import authMiddleware from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post("/create", authMiddleware, createWorkspace);
-router.patch("/name", authMiddleware, updateWorkspaceName);
+router.patch("/name/:id", authMiddleware, updateWorkspaceName);
 
 export default router;
