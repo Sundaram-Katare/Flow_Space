@@ -13,6 +13,12 @@ export const createWorkspace = async (req, res) => {
             [name, owner_id, invite_code]
         );
 
+        await pool.query(`
+             INSERT INTO workspace_members (user_id, workspace_id, role)
+             VALUES ($1, $2, 'admin')
+          `, [owner_id, newWorkspace.rows[0].id]
+        );
+
         return res.status(200).json({ message: "Workspace created successfully", newWorkspace: newWorkspace[0] });
 
     } catch (err) {
@@ -76,4 +82,31 @@ export const getWorkspaceInviteCode = async (req, res) => {
     }
 };
 
-// export const joinWorkspace 
+export const joinWorkspace = async (req, res) => {
+    try {
+      const { invite_code } = req.body;
+      const user_id = req.user.id;
+
+      const workspace = await pool.query(`
+        SELECT * FROM workspaces
+        WHERE invite_code = $1
+      `, [invite_code]);
+
+      if (workspace.rows.length === 0) {
+        return res.status(404).json({ message: "Workspace not found" });
+      }
+
+      const workspace_id = workspace.rows[0].id;
+        await pool.query(`
+        INSERT INTO workspace_members (user_id, workspace_id)
+        VALUES ($1, $2)
+        ON CONFLICT (user_id, workspace_id) DO NOTHING
+      `, [user_id, workspace_id]);
+
+
+      return res.status(200).json({ message: "Successfully joined workspace", workspace: workspace.rows[0] });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Error Joining Workspace", err });
+    }
+}
