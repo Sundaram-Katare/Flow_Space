@@ -2,7 +2,7 @@ import pool from "../../db/db.js";
 import bcrypt from 'bcryptjs';
 import generateToken from "../../services/jwt.js";
 
-export default registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
