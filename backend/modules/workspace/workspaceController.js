@@ -60,3 +60,18 @@ export const updateWorkspaceName = async (req, res) => {
     return res.status(500).json({ message: "Error Updating Workspace name", error: err.message });
   }
 };
+
+export const getWorkspaceInviteCode = async (req, res) => {
+    try {
+      const { id: w_id } = req.params;
+
+      const code = await pool.query(`
+        SELECT invite_code FROM workspaces
+        WHERE id = $1
+        `, [w_id]);
+
+        return res.status(200).json({ message: "Invite Code Fetched successfully", code });
+    } catch (err) {
+        return res.status(500).json({ message: "Error Getting Invite Code", err });
+    }
+}
