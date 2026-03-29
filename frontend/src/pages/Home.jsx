@@ -4,11 +4,11 @@ import { easeInOut, motion, propEffect } from 'framer-motion';
 export default function Home() {
     return (
         <>
-            <div className="bg-transparent min-h-screen mx-64">
+            <div className="bg-transparent min-h-screen mx-64 font-poppins">
                 <Navbar />
 
                 <div className="flex flex-col items-center justify-center h-full py-32 space-y-12">
-                    <div className="text-center text-black text-7xl font-bold">
+                    <div className="text-center text-black text-7xl font-semibold font-poppins">
                         Collaborate and Organize work effortlessly
                     </div>
 
