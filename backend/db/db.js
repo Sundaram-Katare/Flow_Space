@@ -6,6 +6,7 @@ const { Pool } = pkg;
 const pool = new Pool({
     connectionString: env.DB_URL,
     ssl: {
+        require: true,
         rejectUnauthorized: false,
     }
 });

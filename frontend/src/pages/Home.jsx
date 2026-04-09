@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import { delay, eachAxis, easeInOut, motion, propEffect, scale } from 'framer-motion';
 import { ArrowRight, ArrowRightIcon } from 'lucide-react';
 import Features from "../components/Features";
+import { useNavigate } from "react-router";
 
 const sentence = "Manage tasks, chat with your team, and track progress all in one place.";
 
@@ -13,6 +14,8 @@ const charVariants = {
 
 
 export default function Home() {
+    const navigate = useNavigate();
+    
     return (
         <>
             <div className="bg-transparent min-h-screen mx-64 font-poppins ">
@@ -68,6 +71,7 @@ export default function Home() {
                                         initial={{ opacity: 0, scale: 0.1 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.6, delay: 0.8 }}
+                                        onClick={() => navigate("/auth")}
                                     >
                                         Create Your Workspace
 

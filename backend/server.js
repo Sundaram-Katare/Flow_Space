@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import pool from './db/db.js';
 import { env } from './config/env.js';
 import authRoutes from './modules/auth/authRoutes.js';
@@ -8,6 +9,7 @@ const app = express();
 
 console.log("DB URL 🙂 ", env.DB_URL);
 
+app.use(cors());
 app.use(express.json());
 
 pool.connect()
