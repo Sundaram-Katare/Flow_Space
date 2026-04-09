@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import { delay, eachAxis, easeInOut, motion, propEffect, scale } from 'framer-motion';
 import { ArrowRight, ArrowRightIcon } from 'lucide-react';
+import Features from "../components/Features";
 
 const sentence = "Manage tasks, chat with your team, and track progress all in one place.";
 
@@ -14,7 +15,7 @@ const charVariants = {
 export default function Home() {
     return (
         <>
-            <div className="bg-transparent min-h-screen mx-64 font-poppins">
+            <div className="bg-transparent min-h-screen mx-64 font-poppins ">
                 <Navbar />
 
                 <div className="flex flex-col items-center justify-center h-full py-32 space-y-12">
@@ -105,7 +106,7 @@ export default function Home() {
                                         ease: "easeInOut"
                                     }}
 
-                                    src="/featureImg1.png" alt="" className="rounded-md border border-4 border-4-white" />
+                                    src="/featureImg1.png" alt="" className="shadow-xl shaodow-black rounded-md border border- border-4-white" />
                             </div>
 
                             <div className="rounded-md relative">
@@ -118,13 +119,14 @@ export default function Home() {
                                         ease: "easeInOut"
                                     }}
 
-                                    src="/featureImg1.png" alt="" className="rounded-md border border-4 border-4-white" />
+                                    src="/featureImg1.png" alt="" className="shadow-xl shaodow-black rounded-md border border- border-4-white" />
                             </div>
 
                         </div>
                     </div>
                 </div>
             </div>
+                        <Features />
         </>
     )
 }
