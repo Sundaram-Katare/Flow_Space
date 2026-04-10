@@ -31,6 +31,7 @@ export default function Auth() {
       navigate("/dashboard");
     } else {
       dispatch(signupUser(formData));
+      navigate("/dashboard");
     }
   };
 
