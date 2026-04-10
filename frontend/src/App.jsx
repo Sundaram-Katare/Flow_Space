@@ -4,6 +4,8 @@ import Auth from "./pages/Auth";
 import DashboardLayout from "./layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
+import WorkspaceLayout from "./layout/WorkspaceLayout";
+import Workspace from "./pages/Workspace";
 
 
 function App() {
@@ -18,6 +20,10 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
+            </Route>
+
+            <Route element={<WorkspaceLayout />}>
+               <Route path="/workspace/:id" element={<Workspace />} />
             </Route>
           </Routes>
         </BrowserRouter>
