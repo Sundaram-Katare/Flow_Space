@@ -111,6 +111,23 @@ export const joinWorkspace = async (req, res) => {
     }
 };
 
+
+export const getUserWorkspaces = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+
+        const workspaces = await pool.query(`
+            SELECT w.* FROM workspaces w
+            JOIN workspace_members wm ON w.id = wm.workspace_id
+            WHERE wm.user_id = $1
+        `, [user_id]);
+
+        return res.status(200).json({ message: "Fetched workspaces successfully", workspaces: workspaces.rows });
+    } catch (err) {
+        return res.status(500).json({ message: "Error Fetching workspaces", err: err.message });
+    }
+};
+
 export const getAllMemebersOfWorkspace = async (req, res) => {
     try {
       const {id: w_id} = req.params;

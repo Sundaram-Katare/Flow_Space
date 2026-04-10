@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, signupUser } from "../../features/auth/authSlice.js";
 import { Mail, Lock, User, Zap } from "lucide-react";

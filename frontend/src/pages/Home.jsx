@@ -3,6 +3,8 @@ import { delay, eachAxis, easeInOut, motion, propEffect, scale } from 'framer-mo
 import { ArrowRight, ArrowRightIcon } from 'lucide-react';
 import Features from "../components/Features";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const sentence = "Manage tasks, chat with your team, and track progress all in one place.";
 

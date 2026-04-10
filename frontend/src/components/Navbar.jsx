@@ -2,7 +2,7 @@
 export default function Navbar() {
     return (
         <>
-         <nav className="flex justify-between items-center py-4 text-black font-inter">
+         <nav className="flex justify-between items-center py-4 text-black font-poppins">
             <div className="flex items-center text-4xl font-bold">
                FlowSpace
             </div>
