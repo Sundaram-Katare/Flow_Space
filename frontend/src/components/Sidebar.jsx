@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserWorkspaces } from "../../features/workspace/workspaceSlice";
-import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase } from "lucide-react";
+import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase, Menu, X, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Sidebar({ open, setOpen }) {
