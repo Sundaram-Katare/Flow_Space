@@ -1,27 +1,47 @@
-import express from 'express';
-import cors from 'cors';
-import pool from './db/db.js';
-import { env } from './config/env.js';
-import authRoutes from './modules/auth/authRoutes.js';
-import workspaceRoutes from './modules/workspace/workspaceRoutes.js';
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+const { Server } = require('socket.io');
+const env = require('./config/env');
+const logger = require('./utils/logger');
 
 const app = express();
+const server = http.createServer(app);
 
-console.log("DB URL 🙂 ", env.DB_URL);
-
-app.use(cors());
-app.use(express.json());
-
-pool.connect()
-    .then(() => console.log('Connected to Neon DB'))
-    .catch(() => console.log('Failed to connect with the Database'));
-
-
-
-app.use('/api/auth', authRoutes);
-app.use('/api/workspace', workspaceRoutes);    
-
-
-app.listen(5000, () => {
-    console.log(`Server is running on PORT 5000`);
+const io = new Server(server, {
+    cors: {
+        origin: env.frontend_url,
+        methods: ['GET', 'POST'], 
+    },
 });
+
+app.use(express.json());
+app.use(cors());
+
+
+app.use((req, res) => {
+    logger.info(`${req.method} ${req.path}`);
+    next();
+});
+
+//Health Check
+app.get("/api/health", (req, res) => {
+    res.json({ status: "OK", message: "Server is running" });
+});
+
+io.on('connection', (socket) => {
+  logger.info(`User connected: ${socket.id}`);
+  
+  socket.on('disconnect', () => {
+    logger.info(`User disconnected: ${socket.id}`);
+  });
+});
+
+app.set('io', io);
+
+server.listen(env.port, () => {
+  logger.info(`🚀 Server running on http://localhost:${env.port}`);
+  logger.info(`📡 Socket.io available for real-time updates`);
+});
+
+module.exports = { app, server, io };
