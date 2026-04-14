@@ -18,15 +18,13 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(cors());
 
-
-app.use((req, res) => {
-    logger.info(`${req.method} ${req.path}`);
-    next();
-});
-
 //Health Check
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Server is running" });
+});
+
+app.use((req, res) => {
+    logger.info(`${req.method} ${req.path}`);
 });
 
 io.on('connection', (socket) => {
