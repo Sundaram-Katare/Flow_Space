@@ -29,6 +29,7 @@ export const getUserById = async (userId) => {
       'SELECT id, email, username, first_name, last_name, avatar FROM users WHERE id = $1',
       [userId]
      );
+     return result.rows[0];
   } catch (err) {
     console.log('Error Getting User', err);
     throw err;
@@ -41,6 +42,7 @@ export const getUserByEmail = async (email) => {
       'SELECT * FROM users WHERE email = $1', 
       [email]
     );
+    return result.rows[0];
   } catch (err) {
     console.log("Error Getting User: ", err);
     throw err;
@@ -56,6 +58,7 @@ export const createUser = async (email, username, hashedPassword, firstName, las
       RETURNING id, email, username, first_name, last_name
       `, [email, username, hashedPassword, firstName, lastName]
     );
+    return result.rows[0];
   } catch (err) {
     console.log("Error Creating User: ", err);
     throw err;
