@@ -1,17 +1,26 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+const jwt = require('jsonwebtoken');
+const env = require('../config/env');
 
-dotenv.config();
++function generateToken(userId) {
+  return jwt.sign(
+    { userId },               
+    env.jwt.secret,               
+    { expiresIn: env.jwt.expiry } 
+  );
+}
 
-const generateToken = (user) => {
-    try {
-        const id = user.id;
-
-        const token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '6h' });
-        return token;
-    } catch (error) {
-        throw new Error('Error generating token');
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, env.jwt.secret);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new Error('Token expired');
     }
-};
+    throw new Error('Invalid token');
+  }
+}
 
-export default generateToken;
+module.exports = {
+  generateToken,
+  verifyToken,
+};
