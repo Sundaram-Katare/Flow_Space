@@ -19,7 +19,6 @@ export const createUserTable = async () => {
   }
 };
 
-
 export const updateTable = async () => {
   try {
     await pool.query(
