@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const env = require('./config/env');
 const logger = require('./utils/logger');
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -22,6 +23,8 @@ app.use(cors());
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Server is running" });
 });
+
+app.use("/api/auth", authRoutes);
 
 app.use((req, res) => {
     logger.info(`${req.method} ${req.path}`);

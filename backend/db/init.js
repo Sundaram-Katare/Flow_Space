@@ -1,23 +1,28 @@
-import dotenv from 'dotenv';
-import * as tables from '../Tables/index.js';
+const { createUserTable } = require("../Tables/users.js");
+const { createWorkspacesTable } = require("../Tables/workspaces.js");
+const { createWorkspaceMembersTable } = require("../Tables/workspace_members.js");
+const { createChannelsTable } = require("../Tables/channels.js");
+const { createMessagesTable } = require("../Tables/messages.js");
+const { createTasksTable } = require("../Tables/tasks.js");
+// const { createDocsTable } = require("../Tables/docs.js");
 
-dotenv.config();
-
-const initializeDb = async () => {
+const initializeTables = async () => {
   try {
-    console.log("Starting database initialization...");
-    
-    for (const [tableName, createFn] of Object.entries(tables)) {
-      console.log(`Executing ${tableName}...`);
-      await createFn();
-    }
-    
-    console.log("Database initialization completed successfully.");
-    process.exit(0);
+    console.log("Initializing database tables...");
+
+    await createUserTable();
+    await createWorkspacesTable();
+    await createWorkspaceMembersTable();
+    await createChannelsTable();
+    await createMessagesTable();
+    await createTasksTable();
+    // await createDocsTable();
+
+    console.log("All tables initialized successfully");
   } catch (err) {
     console.error("Database initialization failed:", err);
-    process.exit(1);
+    throw err;
   }
 };
 
-initializeDb();
+module.exports = { initializeTables };
