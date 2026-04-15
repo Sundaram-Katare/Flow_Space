@@ -1,12 +1,31 @@
-import crypto from 'crypto';
 
-function generateCodeFromName(name) {
-  const hash = crypto.createHash('sha256').update(name).digest('hex');
-  const numeric = BigInt('0x' + hash).toString().slice(0, 10);
-//   console.log(typeof(numeric));
-  return numeric;
-}
+export const generateWorkspaceCode = () => {
+  let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let code = "";
 
-// console.log(generateCodeFromName("My Workspace")); // Example usage
+  for(let i=0; i<6; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
 
-export default generateCodeFromName;
+  return code;
+};
+
+export const ensureUniqueCode = async (getWorkspaceByCode) => {
+  let code = generateWorkspaceCode();
+  let isUnique = false;
+
+  while(!isUnique) {
+    try {
+       const existing = await getWorkspaceByCode(code);
+       if(!existing) {
+        isUnique = true;
+       } else {
+        code = generateWorkspaceCode();
+       }
+    } catch (err) {
+      isUnique = true;
+    }
+  }
+
+  return code;
+};
