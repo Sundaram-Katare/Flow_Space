@@ -1,4 +1,4 @@
-import pool from "../db/db.js";
+const pool = require('../db/db');
 
 export const createWorkspacesTable = async () => {
     try {
@@ -92,6 +92,60 @@ export const deleteWorkspace = async (workspaceId) => {
     await pool.query('DELETE FROM workspaces WHERE id = $1', [workspaceId]);
   } catch (err) {
     console.log("Error Deleting Workspace:", err);
+    throw err;
+  }
+};
+
+export const getWorkspaceByCode = async (code) => {
+  try {
+    const result = await pool.query(`
+       SELECT * FROM workspaces 
+       WHERE workspace_code = $1
+      `, [code]);
+
+      return result.rows[0];
+  } catch (err) {
+    console.log("Error Getting Workspace from the code: ", err);
+    throw err;
+  }
+};
+
+export const getWorkspaceWithMembers = async (workspaceId) => {
+  try {
+    const workspace = getWorkspaceById(workspaceId);
+
+    const members = await pool.query(`
+       SELECT u.id, u.username, u.email, u.avatar, wm.role, wm.joined_at
+       FROM workspace_members wm
+       JOIN users u ON wm.user_id = u.id
+       WHERE wm.workspace_id = $1
+       ORDER BY wm.joined_at ASC
+      `, [workspaceId]);
+
+      return {
+        ...workspace,
+        members: members.rows,
+        member_count: members.rows.length,
+      };
+
+  } catch (err) {
+    console.log("Error Getting Workspace with members: ", err);
+    throw err;
+  }
+};
+
+export const updateWorkspaceCode = async (workspaceId) => {
+  try {
+    const newCode = await ensureUniqueCode(getWorkspaceByCode);
+    
+    const result = await pool.query(
+      'UPDATE workspaces SET workspace_code = $1 WHERE id = $2 RETURNING *',
+      [newCode, workspaceId]
+    );
+    
+    return result.rows[0];
+  } catch (err) {
+    console.log("❌ Error Updating Workspace Code:", err);
     throw err;
   }
 };
