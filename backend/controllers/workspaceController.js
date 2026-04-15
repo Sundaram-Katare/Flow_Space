@@ -1,11 +1,22 @@
-import { jsx } from "react/jsx-runtime";
-import { ensureUniqueCode } from "../services/generateWorkspaceCode";
-import { addMemberToWorkspace, getMemberRole, getWorkspaceMembers, removeMemberFromWorkspace } from "../Tables/workspace_members";
-import { deleteWorkspace, getUserWorkspaces, getWorkspaceByCode, getWorkspaceById, updateWorkspace } from "../Tables/workspaces";
+const { ensureUniqueCode } = require("../services/generateWorkspaceCode");
+
+const {
+  addMemberToWorkspace,
+  getMemberRole,
+  getWorkspaceMembers,
+  removeMemberFromWorkspace,
+} = require("../Tables/workspace_members");
+
+const {
+  deleteWorkspace,
+  getUserWorkspaces,
+  getWorkspaceByCode,
+  getWorkspaceById,
+  updateWorkspace,
+} = require("../Tables/workspaces");
 
 
-
-export const createWorkspace = async (req, res) => {
+export const createNewWorkspace = async (req, res) => {
     try {
         const userId = req.userId;
         const { name, description } = req.body;

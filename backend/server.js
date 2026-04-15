@@ -5,6 +5,7 @@ const { Server } = require('socket.io');
 const env = require('./config/env');
 const logger = require('./utils/logger');
 const authRoutes = require("./routes/authRoutes");
+const workspaceRoutes = require("./routes/workspaceRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +26,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/workspace", workspaceRoutes);
 
 app.use((req, res) => {
     logger.info(`${req.method} ${req.path}`);
