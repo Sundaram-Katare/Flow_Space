@@ -1,7 +1,7 @@
 import { jsx } from "react/jsx-runtime";
 import { ensureUniqueCode } from "../services/generateWorkspaceCode";
-import { addMemberToWorkspace, getMemberRole } from "../Tables/workspace_members";
-import { getUserWorkspaces, getWorkspaceByCode, getWorkspaceById, updateWorkspace } from "../Tables/workspaces";
+import { addMemberToWorkspace, getMemberRole, getWorkspaceMembers, removeMemberFromWorkspace } from "../Tables/workspace_members";
+import { deleteWorkspace, getUserWorkspaces, getWorkspaceByCode, getWorkspaceById, updateWorkspace } from "../Tables/workspaces";
 
 
 
@@ -112,3 +112,136 @@ export const updateWorkspaceController = async (req, res) => {
     }
 };
 
+export const deleteWorkspaceController = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { workspaceId } = req.params;
+
+        const workspace = await getWorkspaceById(workspaceId);
+        if (workspace.user_id !== userId) {
+            return res.status(403).json({ error: "Only Owner can delete the workspace" });
+        }
+
+        await deleteWorkspace(workspaceId);
+
+        await cache.del(`workspace:${workspaceId}`);
+        await cache.del(`user_workspaces:${userId}`);
+
+        res.json({ message: "Workspace deleted successfully" });
+    } catch (err) {
+        console.error("Error Delrting the workspace: ", err);
+        return res.status(500).json({ error: "Error Delting the workspace " });
+    }
+};
+
+export const getWorkspaceMembersController = async (req, res) => {
+    try {
+        const { workspaceId } = req.params;
+
+        const cacheKey = `workspace_members:${workspaceId}`;
+        const cached = await cache.get(cacheKey);
+        if (cached) {
+            return res.status(200).json({ members: cached });
+        }
+
+        const members = await getWorkspaceMembers(workspaceId);
+
+        await cache.set(cacheKey, members, 1800);
+
+        res.status(200).json({ members });
+    } catch (err) {
+        console.error("Error Getting Workspace Mmebers: ", err);
+        return res.status(500).json({ error: "Error Gettign Workspace Members" });
+    }
+};
+
+//Join Workspace via code
+export const joinWorkspaceController = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { workspace_code } = req.body;
+
+        if (!workspace_code) {
+            return res.status(400).json({ Error: "Workspace_code is required" });
+        }
+
+        const workspace = await getWorkspaceByCode(workspace_code);
+
+        if (!workspace) {
+            return res.status(400).json({ error: "Invalid Workspace" });
+        }
+
+        const existingMember = await getMemberRole(workspace.id, userId);
+        if (existingMember) {
+            return res.status(409).json({ error: "Already a member of this workspace" });
+        }
+
+        await addMemberToWorkspace(workspace.id, userId, "member");
+
+        await cache.del(`user_workspaces:${userId}`);
+        await cache.del(`workspace_members:${workspace.id}`);
+
+        res.status(201).json({
+            message: "Joined workspace successfully",
+            workspace: {
+                id: workspace.id,
+                name: workspace.name,
+            },
+        });
+    } catch (err) {
+        console.error("Error Joining Workspace: ", err);
+        return res.status(500).json({ error: "Error Joining workspace " });
+    }
+};
+
+export const removeMemberController = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { workspaceId, memberId } = req.params;
+
+        const requesterRole = await getMemberRole(workspaceId, userId);
+        if (requesterRole !== 'admin') {
+            return res.status(403).json({ error: "Only admin can remove a member from the workspace" });
+        }
+
+        const targetRole = await getMemberRole(workspaceId, memberId);
+        if (targetRole === "admin" && memberId !== userId) {
+            return res.status(403).json({ error: "Cannot remove other admins" });
+        }
+
+        await removeMemberFromWorkspace(workspaceId, memberId);
+
+        return res.status(200).json({ message: "Member Removed Successfully" });
+    } catch (err) {
+        console.error("Error Removing Member: ", err);
+        return res.status(500).json({ error: "Error Removing member from the workspace" });
+    }
+};
+
+// Regenerate the Invite code
+
+//Leave Workspace
+export const leaveWorkspaceController = async (res, res) => {
+    try {
+        const userId = req.userId;
+        const { workspaceId } = req.params;
+
+        const workspace = await getWorkspaceById(workspaceId);
+
+        if (workspace.user_id == userId) {
+            return res.status(403).json({
+                error: "Workspace owner cannot leave. Delete the workspace or transfer ownership.",
+            });
+        }
+
+        await removeMemberFromWorkspace(workspaceId, userId);
+        // Invalidate caches
+        await cache.del(`user_workspaces:${userId}`);
+        await cache.del(`workspace_members:${workspaceId}`);
+
+        res.status(200).json({ message: "Left workspace successfully" });
+    } catch (err) {
+        console.error("Error Leaving Workspace: ", err);
+        return res.status(500).json({ error: "Error Leaving the workspace" });
+    }
+};
