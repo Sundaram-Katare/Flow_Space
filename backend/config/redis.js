@@ -1,5 +1,5 @@
-const redis = require('redis');
-const env = require('./env');
+import redis from 'redis';
+import { env } from './env.js';
 
 const redisClient = redis.createClient({
     host: env.redis.host,
@@ -18,4 +18,4 @@ redisClient.connect().catch((err) => {
     console.error("Redis Connection Failed: ", err);
 });
 
-module.exports = redisClient;
+export default redisClient;

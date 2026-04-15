@@ -1,81 +1,111 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from 'axios';
-
-const BACKEND_API = "http://localhost:5000/api";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    workspaces: [],
-    loading: false,
-    error: null,
+  workspaces: [],
+  currentWorkspace: null,
+  members: [],
+  isLoading: false,
+  error: null,
 };
 
-export const createWorkspace = createAsyncThunk(
-    'workspace/create',
-    async (workspaceData, { rejectWithValue, getState }) => {
-        try {
-            const { auth } = getState();
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${auth.token}`
-                }
-            };
-            const response = await axios.post(`${BACKEND_API}/workspace/create`, workspaceData, config);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || error.message);
-        }
-    }
-);
-
-export const fetchUserWorkspaces = createAsyncThunk(
-    'workspace/fetchUserWorkspaces',
-    async (_, { rejectWithValue, getState }) => {
-        try {
-            const { auth } = getState();
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${auth.token}`
-                }
-            };
-            const response = await axios.get(`${BACKEND_API}/workspace/user`, config);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || error.message);
-        }
-    }
-);
-
 const workspaceSlice = createSlice({
-    name: "workspace",
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(createWorkspace.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(createWorkspace.fulfilled, (state, action) => {
-                state.loading = false;
-                state.workspaces.push(action.payload.newWorkspace);
-            })
-            .addCase(createWorkspace.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            .addCase(fetchUserWorkspaces.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchUserWorkspaces.fulfilled, (state, action) => {
-                state.loading = false;
-                state.workspaces = action.payload.workspaces;
-            })
-            .addCase(fetchUserWorkspaces.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            });
-    }
+  name: "workspace",
+  initialState,
+  reducers: {
+    // Fetch workspaces
+    fetchWorkspacesStart: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    fetchWorkspacesSuccess: (state, action) => {
+      state.isLoading = false;
+      state.workspaces = action.payload;
+    },
+    fetchWorkspacesFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    // Create workspace
+    createWorkspaceStart: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    createWorkspaceSuccess: (state, action) => {
+      state.isLoading = false;
+      state.workspaces.push(action.payload);
+    },
+    createWorkspaceFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    // Set current workspace
+    setCurrentWorkspace: (state, action) => {
+      state.currentWorkspace = action.payload;
+    },
+
+    // Fetch workspace members
+    fetchMembersStart: (state) => {
+      state.isLoading = true;
+    },
+    fetchMembersSuccess: (state, action) => {
+      state.isLoading = false;
+      state.members = action.payload;
+    },
+    fetchMembersFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    // Join workspace
+    joinWorkspaceStart: (state) => {
+      state.isLoading = true;
+    },
+    joinWorkspaceSuccess: (state, action) => {
+      state.isLoading = false;
+      state.workspaces.push(action.payload);
+    },
+    joinWorkspaceFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    // Leave workspace
+    leaveWorkspace: (state, action) => {
+      state.workspaces = state.workspaces.filter(
+        (w) => w.id !== action.payload
+      );
+      if (state.currentWorkspace?.id === action.payload) {
+        state.currentWorkspace = null;
+      }
+    },
+
+    // Logout
+    clearWorkspaces: (state) => {
+      state.workspaces = [];
+      state.currentWorkspace = null;
+      state.members = [];
+    },
+  },
 });
+
+export const {
+  fetchWorkspacesStart,
+  fetchWorkspacesSuccess,
+  fetchWorkspacesFailure,
+  createWorkspaceStart,
+  createWorkspaceSuccess,
+  createWorkspaceFailure,
+  setCurrentWorkspace,
+  fetchMembersStart,
+  fetchMembersSuccess,
+  fetchMembersFailure,
+  joinWorkspaceStart,
+  joinWorkspaceSuccess,
+  joinWorkspaceFailure,
+  leaveWorkspace,
+  clearWorkspaces,
+} = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;

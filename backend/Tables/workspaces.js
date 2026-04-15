@@ -1,4 +1,4 @@
-const pool = require('../db/db');
+import pool from '../db/db.js';
 
 export const createWorkspacesTable = async () => {
     try {

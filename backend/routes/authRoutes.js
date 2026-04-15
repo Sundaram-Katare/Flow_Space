@@ -1,6 +1,6 @@
-const express = require('express');
-const {signup, login, getCurrentUser, verifyTokenEndpoint } = require('../controllers/authController');
-const { verifyAuth } = require('../middleware/authMiddleware');
+import express from 'express';
+import { signup, login, getCurrentUser, verifyTokenEndpoint } from '../controllers/authController.js';
+import { verifyAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

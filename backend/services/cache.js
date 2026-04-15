@@ -1,4 +1,4 @@
-const redisClient = require('../config/redis');
+import redisClient from '../config/redis.js';
 
 async function set(key, value, expirySeconds = 3600) {
     try {
@@ -34,9 +34,4 @@ async function clear() {
   }
 }
 
-module.exports = {
-    set,
-    get,
-    del,
-    clear,
-};
+export { set, get, del, clear };

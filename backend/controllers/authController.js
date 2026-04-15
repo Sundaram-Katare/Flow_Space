@@ -1,9 +1,10 @@
-const  { 
+import { 
   createUser, 
-  getUserByEmail 
-} =  require("../../Tables/users");
-const { generateToken, verifyToken } =  require("../../services/jwt");
-const bcrypt = require("bcrypt");
+  getUserByEmail,
+  getUserById
+} from "../Tables/users.js";
+import { generateToken, verifyToken } from "../services/jwt.js";
+import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
   try {
@@ -87,7 +88,6 @@ export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const { getUserById } = await import("../../Tables/users.js");
     const user = await getUserById(userId);
 
     if (!user) {

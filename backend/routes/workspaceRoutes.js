@@ -1,6 +1,6 @@
-const express = require('express');
-const { verifyAuth } = require("../middleware/authMiddleware");
-const { createNewWorkspace, getUserWorkspacesController, getWorkspaceController, updateWorkspaceController, deleteWorkspaceController, getWorkspaceMembersController, joinWorkspaceController, removeMemberController, leaveWorkspaceController } = require('../controllers/workspaceController');
+import express from 'express';
+import { verifyAuth } from "../middleware/authMiddleware.js";
+import { createNewWorkspace, getUserWorkspacesController, getWorkspaceController, updateWorkspaceController, deleteWorkspaceController, getWorkspaceMembersController, joinWorkspaceController, removeMemberController, leaveWorkspaceController } from '../controllers/workspaceController.js';
 
 const router = express.Router();
 

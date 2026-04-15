@@ -1,4 +1,4 @@
-const { verifyToken } = require("../services/jwt");
+import { verifyToken } from "../services/jwt.js";
 
 export const verifyAuth = async (req, res, next) => {
     try {

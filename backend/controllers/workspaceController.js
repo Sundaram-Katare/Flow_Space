@@ -1,19 +1,22 @@
-const { ensureUniqueCode } = require("../services/generateWorkspaceCode");
+import { ensureUniqueCode } from "../services/generateWorkspaceCode.js";
 
-const {
+import {
   addMemberToWorkspace,
   getMemberRole,
   getWorkspaceMembers,
   removeMemberFromWorkspace,
-} = require("../Tables/workspace_members");
+} from "../Tables/workspace_members.js";
 
-const {
+import {
   deleteWorkspace,
   getUserWorkspaces,
   getWorkspaceByCode,
   getWorkspaceById,
   updateWorkspace,
-} = require("../Tables/workspaces");
+  createdWorkspace as createWorkspace,
+} from "../Tables/workspaces.js";
+
+import * as cache from "../services/cache.js";
 
 
 export const createNewWorkspace = async (req, res) => {
@@ -232,7 +235,7 @@ export const removeMemberController = async (req, res) => {
 // Regenerate the Invite code
 
 //Leave Workspace
-export const leaveWorkspaceController = async (res, res) => {
+export const leaveWorkspaceController = async (req, res) => {
     try {
         const userId = req.userId;
         const { workspaceId } = req.params;

@@ -1,5 +1,5 @@
-const pool = require('../config/database');
-// SQL to create all tables
+import pool from '../config/database.js';
+
 const createTablesSQL = `
   -- Drop tables if they exist (for fresh setup)
   DROP TABLE IF EXISTS docs;

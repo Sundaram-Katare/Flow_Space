@@ -1,10 +1,9 @@
-const { createUserTable } = require("../Tables/users.js");
-const { createWorkspacesTable } = require("../Tables/workspaces.js");
-const { createWorkspaceMembersTable } = require("../Tables/workspace_members.js");
-const { createChannelsTable } = require("../Tables/channels.js");
-const { createMessagesTable } = require("../Tables/messages.js");
-const { createTasksTable } = require("../Tables/tasks.js");
-// const { createDocsTable } = require("../Tables/docs.js");
+import { createUserTable } from "../Tables/users.js";
+import { createWorkspacesTable } from "../Tables/workspaces.js";
+import { createWorkspaceMembersTable } from "../Tables/workspace_members.js";
+import { createChannelsTable } from "../Tables/channels.js";
+import { createMessagesTable } from "../Tables/messages.js";
+import { createTasksTable } from "../Tables/tasks.js";
 
 const initializeTables = async () => {
   try {
@@ -16,7 +15,6 @@ const initializeTables = async () => {
     await createChannelsTable();
     await createMessagesTable();
     await createTasksTable();
-    // await createDocsTable();
 
     console.log("All tables initialized successfully");
   } catch (err) {
@@ -25,4 +23,4 @@ const initializeTables = async () => {
   }
 };
 
-module.exports = { initializeTables };
+export { initializeTables };

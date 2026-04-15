@@ -1,5 +1,7 @@
-const { Pool } = require('pg');
-const env = require('./env');
+import pg from 'pg';
+import { env } from './env.js';
+
+const { Pool } = pg;
 
 const pool = new Pool(
     {
@@ -15,4 +17,4 @@ pool.on('error', (err) => {
     console.error('Postgres Erro: ', err);
 });
 
-module.exports = pool;
+export default pool;

@@ -1,4 +1,4 @@
-const env = require('../config/env');
+import { env } from '../config/env.js';
 
 function log(level, message, data = null) {
   const timestamp = new Date().toISOString();
@@ -18,7 +18,7 @@ function log(level, message, data = null) {
   }
 }
 
-module.exports = {
+export default {
   info: (msg, data) => log('info', msg, data),
   warn: (msg, data) => log('warn', msg, data),
   error: (msg, data) => log('error', msg, data),

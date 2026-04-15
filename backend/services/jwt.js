@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 
-+function generateToken(userId) {
+function generateToken(userId) {
   return jwt.sign(
     { userId },               
     env.jwt.secret,               
@@ -20,7 +20,4 @@ function verifyToken(token) {
   }
 }
 
-module.exports = {
-  generateToken,
-  verifyToken,
-};
+export { generateToken, verifyToken };
