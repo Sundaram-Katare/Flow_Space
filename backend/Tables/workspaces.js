@@ -23,7 +23,7 @@ export const createWorkspacesTable = async () => {
 export const createdWorkspace = async (userId, name, description, workspaceCode) => {
     try {
       const result = await pool.query(`
-         INSERT INTO workspaces (userId, name, descriptio, workspace_code)
+         INSERT INTO workspaces (user_id, name, description, workspace_code)
          VALUES ($1, $2, $3, $4)
          RETURNING *
         `, [userId, name, description, workspaceCode]
