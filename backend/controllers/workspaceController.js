@@ -13,7 +13,7 @@ import {
   getWorkspaceByCode,
   getWorkspaceById,
   updateWorkspace,
-  createdWorkspace as createWorkspace,
+  createWorkspace,
 } from "../Tables/workspaces.js";
 
 import * as cache from "../services/cache.js";

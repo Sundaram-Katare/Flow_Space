@@ -54,7 +54,7 @@ export default function WorkspaceSwitcher() {
 
       {/* Workspace List */}
       <div className="space-y-2 mb-4">
-        {workspaces.map((workspace) => (
+        {/* {workspaces.map((workspace) => (
           <button
             key={workspace.id}
             onClick={() => dispatch(setCurrentWorkspace(workspace))}
@@ -67,7 +67,7 @@ export default function WorkspaceSwitcher() {
             <p className="font-medium text-sm">{workspace.name}</p>
             <p className="text-xs opacity-70">{workspace.description}</p>
           </button>
-        ))}
+        ))} */}
       </div>
 
       {/* Action Buttons */}

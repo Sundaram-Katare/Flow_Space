@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWorkspacesSuccess } from "../../features/workspace/workspaceSlice";
+import { logout } from "../../features/auth/authSlice.js";
+import { fetchWorkspacesSuccess } from "../../features/workspace/workspaceSlice.js";
 import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase, Menu, X, ChevronLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Sidebar({ open, setOpen }) {
     const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
     const dispatch = useDispatch();
     const { workspaces } = useSelector((state) => state.workspace);
+    // const { token } = useSelector((state) => state.auth);
+    // const { logout } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(fetchWorkspacesSuccess());
     }, [dispatch]);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate("/auth");
+    };
 
     return (
         <div
@@ -44,7 +53,7 @@ export default function Sidebar({ open, setOpen }) {
                 </Link>
 
                 <div className="flex flex-col">
-                    <button 
+                    <button
                         onClick={() => open && setIsWorkspaceOpen(!isWorkspaceOpen)}
                         className="flex items-center justify-between p-3 hover:bg-white rounded-xl transition-all duration-200 group w-full"
                     >
@@ -57,15 +66,27 @@ export default function Sidebar({ open, setOpen }) {
 
                     {open && isWorkspaceOpen && (
                         <div className="flex flex-col ml-9 mt-1 gap-1 border-l-2 border-gray-300">
-                            {workspaces.map((w) => (
-                                <Link 
-                                    key={w.id} 
-                                    to={`/workspace/${w.id}`}
-                                    className="p-2 pl-4 text-sm font-poppins text-gray-600 hover:text-black hover:bg-white rounded-lg transition-all"
-                                >
-                                    {w.name}
-                                </Link>
-                            ))}
+                            {
+                                workspaces.length > 0 ? (
+                                   <>
+                                     {
+                                        workspaces.map((w) => (
+                                            <Link
+                                                key={w.id}
+                                                to={`/workspaces/${w.id}`}
+                                                className="p-2 pl-4 text-sm font-poppins text-gray-600 hover:text-black hover:bg-white rounded-lg transition-all"
+                                            >
+                                                {w.name}
+                                            </Link>
+                                        ))
+                                    }
+                                   </>
+                                ) : (
+                                    <div className="p-2 pl-4 text-sm font-poppins text-gray-400 italic">
+                                        No workspaces yet
+                                    </div>
+                                )
+                            }
                         </div>
                     )}
                 </div>
@@ -75,6 +96,12 @@ export default function Sidebar({ open, setOpen }) {
                     {open && <span className="font-poppins text-lg font-medium text-gray-700 group-hover:text-black">Settings</span>}
                 </Link>
             </nav>
+
+            <div className="p-3 mt-5 hover:bg-white rounded-xl transition-all duration-200 group cursor-pointer"
+                onClick={handleLogout}
+            >
+                Logout
+            </div>
         </div>
     );
 }

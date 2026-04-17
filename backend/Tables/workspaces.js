@@ -20,7 +20,7 @@ export const createWorkspacesTable = async () => {
     }
 };
 
-export const createdWorkspace = async (userId, name, description, workspaceCode) => {
+export const createWorkspace = async (userId, name, description, workspaceCode) => {
     try {
       const result = await pool.query(`
          INSERT INTO workspaces (user_id, name, description, workspace_code)

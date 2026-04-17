@@ -85,8 +85,8 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createWorkspaceSuccess } from "../../features/workspace/workspaceSlice";
-import { createWorkspace } from "../services/workspace";
+import { createWorkspaceSuccess } from "../../features/workspace/workspaceSlice.js";
+import { createWorkspace } from "../services/workspace.js";
 
 export default function CreateWorkspace({ onClose }) {
   const [name, setName] = useState("");
