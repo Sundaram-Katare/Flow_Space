@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserWorkspaces } from "../../features/workspace/workspaceSlice";
+import { fetchWorkspacesSuccess } from "../../features/workspace/workspaceSlice";
 import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase, Menu, X, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ export default function Sidebar({ open, setOpen }) {
     const { workspaces } = useSelector((state) => state.workspace);
 
     useEffect(() => {
-        dispatch(fetchUserWorkspaces());
+        dispatch(fetchWorkspacesSuccess());
     }, [dispatch]);
 
     return (

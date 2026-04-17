@@ -40,7 +40,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/workspace", workspaceRoutes);
+app.use("/api/workspaces", workspaceRoutes);
 
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.path}`);
