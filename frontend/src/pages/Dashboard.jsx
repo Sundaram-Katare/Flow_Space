@@ -13,7 +13,7 @@ export default function Dashboard() {
   useEffect(() => {
     // Redirect to login if no token
     if (!token) {
-      navigate("/login");
+      navigate("/auth");
     }
   }, [token, navigate]);
 

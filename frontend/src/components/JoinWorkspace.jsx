@@ -18,6 +18,7 @@ export default function JoinWorkspace({ onClose }) {
     try {
       const data = await joinWorkspace(code);
       dispatch(joinWorkspaceSuccess(data.workspace));
+      toast.success("Successfully joined workspace!");
       setCode("");
       onClose();
     } catch (err) {

@@ -59,7 +59,7 @@ export const getUserWorkspacesController = async (req, res) => {
         const cacheKey = `user_workspaces:${userId}`;
         const cached = await cache.get(cacheKey);
         if (cached) {
-            return res.json({ workspace: cached });
+            return res.json({ workspaces: cached });
         }
 
         const workspaces = await getUserWorkspaces(userId);
@@ -92,10 +92,10 @@ export const getWorkspaceController = async (req, res) => {
 
         await cache.set(`workspace:${workspaceId}`, workspace, 3600);
 
-        return req.status(200).json({ workspace });
+        return res.status(200).json({ workspace });
     } catch (err) {
         console.error("Error Getting a workspace: ", err);
-        return res.status(500), json({ error: "Error Getting a workspace" });
+        return res.status(500).json({ error: "Error Getting a workspace" });
     }
 };
 
@@ -143,8 +143,8 @@ export const deleteWorkspaceController = async (req, res) => {
 
         res.json({ message: "Workspace deleted successfully" });
     } catch (err) {
-        console.error("Error Delrting the workspace: ", err);
-        return res.status(500).json({ error: "Error Delting the workspace " });
+        console.error("Error Deleting the workspace: ", err);
+        return res.status(500).json({ error: "Error Deleting the workspace" });
     }
 };
 
@@ -164,8 +164,8 @@ export const getWorkspaceMembersController = async (req, res) => {
 
         res.status(200).json({ members });
     } catch (err) {
-        console.error("Error Getting Workspace Mmebers: ", err);
-        return res.status(500).json({ error: "Error Gettign Workspace Members" });
+        console.error("Error Getting Workspace Members: ", err);
+        return res.status(500).json({ error: "Error Getting Workspace Members" });
     }
 };
 

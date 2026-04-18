@@ -15,7 +15,7 @@ export const getUserWorkspaces = async () => {
 };
 
 export const getWorkspace = async (workspaceId) => {
-    const response = await api.post(`/workspaces/${workspaceId}`);
+    const response = await api.get(`/workspaces/${workspaceId}`);
     return response.data;
 };
 
@@ -39,7 +39,7 @@ export const getWorkspaceMembers = async (workspaceId) => {
 
 export const joinWorkspace = async (workspaceCode) => {
     const response = await api.post("/workspaces/join", {
-        workspaceCode,
+        workspace_code: workspaceCode,
     });
     return response.data;
 };

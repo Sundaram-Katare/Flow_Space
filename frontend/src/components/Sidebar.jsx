@@ -4,6 +4,7 @@ import { logout } from "../../features/auth/authSlice.js";
 import { fetchWorkspacesSuccess } from "../../features/workspace/workspaceSlice.js";
 import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase, Menu, X, ChevronLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { getUserWorkspaces } from "../services/workspace.js";
 
 export default function Sidebar({ open, setOpen }) {
     const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
@@ -14,8 +15,21 @@ export default function Sidebar({ open, setOpen }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(fetchWorkspacesSuccess());
+        const fetchWorkspaces = async () => {
+            try {
+                const data = await getUserWorkspaces();
+                dispatch(fetchWorkspacesSuccess(data.workspaces || []));
+            } catch (error) {
+                console.error('Failed to fetch workspaces:', error);
+                dispatch(fetchWorkspacesSuccess([]));
+            }
+        };
+        fetchWorkspaces();
     }, [dispatch]);
+
+    const handleWorkspaceClick = (workspaceId) => {
+        window.open(`/workspace/${workspaceId}`, '_blank');
+    };
 
     const handleLogout = () => {
         dispatch(logout());
@@ -71,13 +85,13 @@ export default function Sidebar({ open, setOpen }) {
                                    <>
                                      {
                                         workspaces.map((w) => (
-                                            <Link
+                                            <button
                                                 key={w.id}
-                                                to={`/workspaces/${w.id}`}
-                                                className="p-2 pl-4 text-sm font-poppins text-gray-600 hover:text-black hover:bg-white rounded-lg transition-all"
+                                                onClick={() => handleWorkspaceClick(w.id)}
+                                                className="p-2 pl-4 text-left text-sm font-poppins text-gray-600 hover:text-black hover:bg-white rounded-lg transition-all w-full"
                                             >
                                                 {w.name}
-                                            </Link>
+                                            </button>
                                         ))
                                     }
                                    </>

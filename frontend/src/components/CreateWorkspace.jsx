@@ -85,6 +85,7 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import { createWorkspaceSuccess } from "../../features/workspace/workspaceSlice.js";
 import { createWorkspace } from "../services/workspace.js";
 
@@ -104,6 +105,7 @@ export default function CreateWorkspace({ onClose }) {
     try {
       const data = await createWorkspace(name, description);
       dispatch(createWorkspaceSuccess(data.workspace));
+      toast.success("Workspace created successfully!");
       setName("");
       setDescription("");
       onClose();

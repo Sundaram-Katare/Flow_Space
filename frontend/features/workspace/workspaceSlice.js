@@ -19,7 +19,9 @@ const workspaceSlice = createSlice({
     },
     fetchWorkspacesSuccess: (state, action) => {
       state.isLoading = false;
-      state.workspaces = action.payload;
+      state.workspaces = Array.isArray(action.payload) 
+        ? action.payload 
+        : (action.payload?.workspaces || []);
     },
     fetchWorkspacesFailure: (state, action) => {
       state.isLoading = false;
