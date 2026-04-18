@@ -28,7 +28,7 @@ export default function Workspace() {
                     setWorkspaceData(wsData.workspace);
                     dispatch(setCurrentWorkspace(wsData.workspace));
                 }
-
+                
                 dispatch(fetchMembersStart());
                 const membersData = await getWorkspaceMembers(workspaceId);
                 dispatch(fetchMembersSuccess(membersData.members || []));

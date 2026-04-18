@@ -169,7 +169,6 @@ export const getWorkspaceMembersController = async (req, res) => {
     }
 };
 
-//Join Workspace via code
 export const joinWorkspaceController = async (req, res) => {
     try {
         const userId = req.userId;

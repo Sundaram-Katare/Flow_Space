@@ -19,14 +19,14 @@ export const createWorkspaceMembersTable = async () => {
     }
 };
 
-export const addMemberToWorkspace = async (workspaceId, userId, role = 'member' ) => {
+export const addMemberToWorkspace = async (workspaceId, userId, role = "member" ) => {
     try {
         const result = await pool.query(
             `
              INSERT INTO workspace_members (workspace_id, user_id, role)
              VALUES ($1, $2, $3)
              RETURNING *
-            `
+            `,
             [workspaceId, userId, role]
         );
 
@@ -40,7 +40,7 @@ export const getWorkspaceMembers = async (workspaceId) => {
     try {
       const result = await pool.query(
         `
-         SELECT u.id, u.username, u.email, u.avatar, wm.role, wm.joined_at
+         SELECT u.id, u.username, u.email, wm.role, wm.joined_at
          FROM workspace_members wm
          JOIN users u ON wm.user_id = u.id
          WHERE wm.workspace_id = $1
