@@ -76,3 +76,16 @@ export const updateMessage = async (messageId, content) => {
     throw err;
   }
 };
+
+export const getMessageById = async (messageId) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM messages WHERE id = $1',
+      [messageId]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.log("Error Getting Message:", err);
+    throw err;
+  }
+};

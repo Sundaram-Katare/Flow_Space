@@ -5,6 +5,7 @@ import { setCurrentWorkspace, fetchMembersStart, fetchMembersSuccess, fetchMembe
 import { getWorkspace, getWorkspaceMembers } from '../services/workspace';
 import { Copy, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ChatUI from '../components/Workspace/ChatUI';
 
 export default function Workspace() {
     const { id: workspaceId } = useParams();
@@ -105,6 +106,8 @@ export default function Workspace() {
                         )}
                     </div>
                 </div>
+
+                <ChatUI />
             </div>
         </div>
     );

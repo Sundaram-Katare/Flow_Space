@@ -6,6 +6,9 @@ import env from './config/env.js';
 import logger from './utils/logger.js';
 import authRoutes from "./routes/authRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
+import channelRoutes from './routes/channelRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
+
 import { initializeTables } from './db/init.js';
 
 const app = express();
@@ -41,6 +44,8 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", workspaceRoutes);
+app.use("/api/channels", channelRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.path}`);
