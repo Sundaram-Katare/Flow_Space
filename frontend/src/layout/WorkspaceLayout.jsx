@@ -8,7 +8,7 @@ import { getWorkspaceChannels } from "../services/chat";
 import { getWorkspaceMembers } from "../services/workspace";
 
 export default function WorkspaceLayout() {
-  const { id: workspaceId } = useParams();
+  const { id: workspaceId, channelId } = useParams();
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(window.innerWidth > 768);
@@ -17,6 +17,23 @@ export default function WorkspaceLayout() {
   const [channels, setChannels] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Sync state from URL on mount/change
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path.includes("/tasks")) {
+      setActiveItem("tasks");
+      setActiveChannel(null);
+    } else if (path.includes("/docs")) {
+      setActiveItem("docs");
+      setActiveChannel(null);
+    } else if (channelId) {
+      setActiveItem("chats");
+      setActiveChannel(channelId);
+    } else {
+      setActiveItem("chats");
+    }
+  }, [workspaceId, channelId]);
 
   useEffect(() => {
     if (token) {
@@ -38,6 +55,11 @@ export default function WorkspaceLayout() {
         ]);
         setChannels(channelsData.channels || []);
         setMembers(membersData.members || []);
+
+        // If at workspace root, auto-navigate to first channel
+        if (!channelId && !window.location.pathname.includes("/tasks") && !window.location.pathname.includes("/docs") && channelsData.channels?.length > 0) {
+           navigate(`chat/${channelsData.channels[0].id}`, { replace: true });
+        }
       } catch (err) {
         console.error("Failed to fetch workspace data:", err);
       } finally {
@@ -47,15 +69,16 @@ export default function WorkspaceLayout() {
     fetchData();
   }, [workspaceId]);
 
-    useEffect(() => {
-    if (activeItem === "tasks") {
+  // Handle manual navigation when activeItem changes
+  useEffect(() => {
+    if (activeItem === "tasks" && !window.location.pathname.includes("/tasks")) {
       navigate("tasks");
-    } else if (activeItem === "docs") {
+    } else if (activeItem === "docs" && !window.location.pathname.includes("/docs")) {
       navigate("docs");
-    } else if (activeItem === "chats" && channels.length > 0) {
+    } else if (activeItem === "chats" && !channelId && channels.length > 0) {
       navigate(`chat/${channels[0].id}`);
     }
-  }, [activeItem, channels, navigate]);
+  }, [activeItem, channels.length]);
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] font-poppins overflow-hidden">

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import DashboardLayout from "./layout/DashboardLayout";
@@ -10,7 +10,6 @@ import { getCurrentUser } from "./services/auth.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setUser } from "../features/auth/authSlice.js";
-import TaskBoard from "./components/Workspace/TaskBoard.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -42,10 +41,15 @@ function App() {
               <Route index element={<Dashboard />} />
             </Route>
 
-            <Route element={<WorkspaceLayout />}>
-               <Route path="/workspace/:id" element={<Workspace />} />
-               <Route path="tasks" element={<TaskBoard />} />
+            <Route path="/workspace/:id" element={<WorkspaceLayout />}>
+               <Route index element={<Workspace />} />
+               <Route path="chat/:channelId" element={<Workspace />} />
+               <Route path="tasks" element={<Workspace />} />
+               <Route path="docs" element={<Workspace />} />
             </Route>
+
+            {/* Fallback for old/wrong routes */}
+            <Route path="/chat/:channelId" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
       </div>

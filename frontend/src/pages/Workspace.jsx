@@ -6,6 +6,7 @@ import { Hash, Plus, MessageCircle, Info } from 'lucide-react';
 import ChatUI from '../components/Workspace/ChatUI';
 import CreateChannel from '../components/Workspace/CreateChannel';
 import TaskBoard from '../components/Workspace/TaskBoard';
+import DocsPage from '../components/Workspace/DocsPage';
 
 export default function Workspace() {
     const { activeItem, setActiveItem, activeChannel, setActiveChannel, channels, setChannels, workspaceId } = useOutletContext();
@@ -43,6 +44,16 @@ export default function Workspace() {
                     >
                         <TaskBoard workspaceId={workspaceId} />
                     </motion.div>
+                ) : activeItem === 'docs' ? (
+                    <motion.div 
+                        key="docs-view"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        className="flex-1 overflow-hidden"
+                    >
+                        <DocsPage workspaceId={workspaceId} />
+                    </motion.div>
                 ) : (
                     <motion.div 
                         key="create-channel-view-default"
@@ -59,7 +70,8 @@ export default function Workspace() {
                           }}
                         />
                     </motion.div>
-                )}
+                )
+}
             </AnimatePresence>
         </div>
     );

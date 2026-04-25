@@ -51,7 +51,7 @@ export default function Sidebar({ open, setOpen }) {
             animate={{ width: open ? 280 : 80 }}
             className={`
                 bg-[#F8FAFC] border-r border-gray-200 text-slate-900
-                fixed md:static h-screen flex flex-col
+                fixed md:static min-h-screen flex flex-col
                 top-0 left-0 z-50
                 ${!open ? "-translate-x-full md:translate-x-0" : "translate-x-0"}
                 transition-all duration-300 shadow-2xl

@@ -120,6 +120,7 @@ export default function WorkspaceSidebar({
               onClick={() => {
                 setActiveItem(item.id);
                 setActiveChannel(null);
+                navigate(item.id === "chats" ? "" : item.id);
                 if (window.innerWidth < 768) setOpen(false);
               }}
               className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${
@@ -172,6 +173,7 @@ export default function WorkspaceSidebar({
                       key={channel.id}
                       onClick={() => {
                         setActiveChannel(channel.id);
+                        navigate(`chat/${channel.id}`);
                         if (window.innerWidth < 768) setOpen(false);
                       }}
                       className={`group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${

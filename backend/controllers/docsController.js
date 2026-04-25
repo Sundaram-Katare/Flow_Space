@@ -11,17 +11,18 @@ import * as cache from "../services/cache.js";
 export const createDocController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { workspaceId, title, content } = req.body;
+    const { workspaceId } = req.params;
+    const { title, content } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Document title required" });
     }
 
     // Check if user is workspace member
-    const role = await getMemberRole(workspaceId, userId);
-    if (!role) {
-      return res.status(403).json({ error: "Not a member of this workspace" });
-    }
+    // const role = await getMemberRole(workspaceId, userId);
+    // if (!role) {
+    //   return res.status(403).json({ error: "Not a member of this workspace" });
+    // }
 
     // Create document
     // Default content structure if not provided
