@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Hash, Plus, MessageCircle, Info } from 'lucide-react';
 import ChatUI from '../components/Workspace/ChatUI';
 import CreateChannel from '../components/Workspace/CreateChannel';
+import TaskBoard from '../components/Workspace/TaskBoard';
 
 export default function Workspace() {
     const { activeItem, setActiveItem, activeChannel, setActiveChannel, channels, setChannels, workspaceId } = useOutletContext();

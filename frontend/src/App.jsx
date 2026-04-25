@@ -10,6 +10,7 @@ import { getCurrentUser } from "./services/auth.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setUser } from "../features/auth/authSlice.js";
+import TaskBoard from "./components/Workspace/TaskBoard.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function App() {
 
             <Route element={<WorkspaceLayout />}>
                <Route path="/workspace/:id" element={<Workspace />} />
+               <Route path="tasks" element={<TaskBoard />} />
             </Route>
           </Routes>
         </BrowserRouter>

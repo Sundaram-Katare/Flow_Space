@@ -5,21 +5,22 @@ import {
   deleteTask,
 } from "../Tables/tasks.js";
 import { getMemberRole } from "../Tables/workspace_members.js";
-import { cache } from "../services/cache.js";
+import * as cache from "../services/cache.js";
 
 export const createTaskController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { workspaceId, title, description, priority, assignedTo } = req.body;
+    const { workspaceId } = req.params;
+    const { title, description, priority, assignedTo } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Task title required" });
     }
 
-    const role = await getMemberRole(workspaceId, userId);
-    if (!role) {
-      return res.status(403).json({ error: "Not a member of this workspace" });
-    }
+    // const role = await getMemberRole(workspaceId, userId);
+    // if (!role) {
+    //   return res.status(403).json({ error: "Not a member of this workspace" });
+    // }
 
     const task = await createTask(
       workspaceId,
