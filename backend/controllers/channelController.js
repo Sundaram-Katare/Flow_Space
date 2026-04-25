@@ -73,7 +73,7 @@ export const getChannelController = async (req, res) => {
       return res.status(404).json({ error: "Channel not found" });
     }
 
-    const { getChannelMessages } = await import("../../Tables/messages.js");
+    const { getChannelMessages } = await import("../Tables/messages.js");
     const messages = await getChannelMessages(channelId, 50, 0);
 
     res.json({

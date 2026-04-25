@@ -61,7 +61,7 @@ export const deleteMessageController = async (req, res) => {
     const { messageId } = req.params;
     const userId = req.userId;
 
-    const { getMessageById } = await import("../../Tables/messages.js");
+    const { getMessageById } = await import("../Tables/messages.js");
     const message = await getMessageById(messageId);
 
     if (!message) {

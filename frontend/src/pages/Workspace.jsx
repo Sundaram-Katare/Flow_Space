@@ -33,6 +33,16 @@ export default function Workspace() {
                     >
                         <ChatUI channel={currentChannelData} />
                     </motion.div>
+                ) : activeItem === 'tasks' ? (
+                    <motion.div 
+                        key="tasks-view"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="flex-1 overflow-hidden"
+                    >
+                        <TaskBoard workspaceId={workspaceId} />
+                    </motion.div>
                 ) : (
                     <motion.div 
                         key="create-channel-view-default"
