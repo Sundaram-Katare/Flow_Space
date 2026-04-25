@@ -172,7 +172,8 @@ export default function ChatUI({ channel }) {
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-8">
             <div className="w-20 h-20 bg-slate-50 text-slate-200 rounded-3xl flex items-center justify-center mb-4">
-              <Hash size={40} />
+              {/* <Hash size={40} /> */}
+              <img src="https://media.lordicon.com/icons/wired/flat/2149-hashtag.gif" alt="" />
             </div>
             <h3 className="text-xl font-bold text-slate-800">Beginning of #{channel?.name}</h3>
             <p className="text-slate-500 max-w-xs mt-2">This is the start of the #{channel?.name} channel. Send a message to get things started!</p>
@@ -247,9 +248,9 @@ export default function ChatUI({ channel }) {
           onSubmit={handleSendMessage}
           className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-2 p-2 hover:border-teal-300 transition-colors focus-within:border-teal-500 focus-within:ring-4 focus-within:ring-teal-500/10 shadow-sm"
         >
-          <button type="button" className="p-2 text-slate-400 hover:text-teal-600 transition-colors">
+          {/* <button type="button" className="p-2 text-slate-400 hover:text-teal-600 transition-colors">
             <Plus size={20} />
-          </button>
+          </button> */}
           <input
             type="text"
             value={messageText}

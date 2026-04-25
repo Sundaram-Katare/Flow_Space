@@ -64,32 +64,30 @@ export default function CreateChannel({ workspaceId, onSuccess }) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-            <button
-                type="button"
-                onClick={() => setChannelType("public")}
-                className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                    channelType === "public" 
-                    ? "border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/5 shadow-sm" 
-                    : "border-slate-100 bg-slate-50 hover:border-slate-200 text-slate-500"
-                }`}
-            >
-                <Globe size={20} />
-                <span className="font-bold text-xs uppercase tracking-widest text-center">Public</span>
-            </button>
-            <button
-                type="button"
-                onClick={() => setChannelType("private")}
-                className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                    channelType === "private" 
-                    ? "border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/5 shadow-sm" 
-                    : "border-slate-100 bg-slate-50 hover:border-slate-200 text-slate-500"
-                }`}
-            >
-                <Lock size={20} />
-                <span className="font-bold text-xs uppercase tracking-widest text-center">Private</span>
-            </button>
-        </div>
+        {/* <div className="grid grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setChannelType("public")}
+            className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${channelType === "public"
+                ? "border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/5 shadow-sm"
+                : "border-slate-100 bg-slate-50 hover:border-slate-200 text-slate-500"
+              }`}
+          >
+            <Globe size={20} />
+            <span className="font-bold text-xs uppercase tracking-widest text-center">Public</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setChannelType("private")}
+            className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${channelType === "private"
+                ? "border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/5 shadow-sm"
+                : "border-slate-100 bg-slate-50 hover:border-slate-200 text-slate-500"
+              }`}
+          >
+            <Lock size={20} />
+            <span className="font-bold text-xs uppercase tracking-widest text-center">Private</span>
+          </button>
+        </div> */}
 
         <button
           type="submit"
@@ -109,7 +107,7 @@ export default function CreateChannel({ workspaceId, onSuccess }) {
       <div className="mt-8 flex items-start gap-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
         <Info className="text-blue-500 flex-shrink-0 mt-0.5" size={16} />
         <p className="text-xs text-blue-600 font-medium leading-relaxed">
-            Channels are where conversations happen. When private, only invited members can view the content.
+          Collaborate and build something people can use
         </p>
       </div>
     </div>
