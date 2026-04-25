@@ -10,7 +10,7 @@ export const createUserTable = async () => {
         password TEXT NOT NULL,
         first_name VARCHAR(100),
         last_name VARCHAR(100),
-        avatar TEXT,
+        profile_picture TEXT,
         status VARCHAR(20) DEFAULT 'online',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -26,7 +26,7 @@ export const createUserTable = async () => {
 export const getUserById = async (userId) => {
   try {
      const result = await pool.query(
-      'SELECT id, email, username, first_name, last_name, avatar FROM users WHERE id = $1',
+      'SELECT id, email, username, first_name, last_name, profile_picture FROM users WHERE id = $1',
       [userId]
      );
      return result.rows[0];

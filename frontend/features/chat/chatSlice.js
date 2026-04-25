@@ -4,7 +4,7 @@ const initialState = {
   channels: [],
   currentChannel: null,
   messages: [],
-  typingUsers: [], // Users currently typing
+  typingUsers: [], 
   isLoading: false,
   error: null,
 };

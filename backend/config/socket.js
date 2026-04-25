@@ -3,9 +3,8 @@ import { verifyToken } from "../services/jwt.js";
 import { getUserById } from "../Tables/users.js";
 import redisClient from "./redis.js";
 
-// Store active socket connections
-const userSockets = {}; // { userId: [socket1, socket2, ...] }
-const socketUsers = {};  // { socketId: userId }
+const userSockets = {}; 
+const socketUsers = {}; 
 
 export const initializeSocket = (server, app) => {
   const io = new Server(server, {
@@ -16,7 +15,6 @@ export const initializeSocket = (server, app) => {
     },
   });
 
-  // ==================== AUTHENTICATION MIDDLEWARE ====================
   
   io.use(async (socket, next) => {
     try {
@@ -26,7 +24,6 @@ export const initializeSocket = (server, app) => {
         return next(new Error("No token provided"));
       }
 
-      // Verify JWT token
       const decoded = verifyToken(token);
       const user = await getUserById(decoded.userId);
 
@@ -34,7 +31,6 @@ export const initializeSocket = (server, app) => {
         return next(new Error("User not found"));
       }
 
-      // Attach user to socket
       socket.userId = user.id;
       socket.username = user.username;
       socket.email = user.email;
@@ -45,28 +41,23 @@ export const initializeSocket = (server, app) => {
     }
   });
 
-  // ==================== CONNECTION HANDLERS ====================
 
   io.on("connection", (socket) => {
     console.log(`✅ User ${socket.username} connected: ${socket.id}`);
 
-    // Track socket connection
     if (!userSockets[socket.userId]) {
       userSockets[socket.userId] = [];
     }
     userSockets[socket.userId].push(socket);
     socketUsers[socket.id] = socket.userId;
 
-    // ==================== CHANNEL EVENTS ====================
 
-    // User joins channel
     socket.on("join-channel", async (channelId) => {
       try {
         const room = `channel:${channelId}`;
         socket.join(room);
         console.log(`👤 ${socket.username} joined channel ${channelId}`);
 
-        // Notify others that user joined
         socket.to(room).emit("user-joined", {
           userId: socket.userId,
           username: socket.username,
@@ -78,14 +69,12 @@ export const initializeSocket = (server, app) => {
       }
     });
 
-    // User leaves channel
     socket.on("leave-channel", (channelId) => {
       try {
         const room = `channel:${channelId}`;
         socket.leave(room);
         console.log(`👋 ${socket.username} left channel ${channelId}`);
 
-        // Notify others
         io.to(room).emit("user-left", {
           userId: socket.userId,
           username: socket.username,
@@ -96,7 +85,6 @@ export const initializeSocket = (server, app) => {
       }
     });
 
-    // User sends message
     socket.on("send-message", async (data) => {
       try {
         const { channelId, content } = data;
@@ -105,11 +93,9 @@ export const initializeSocket = (server, app) => {
           return socket.emit("error", { message: "Message cannot be empty" });
         }
 
-        // Save message to database
         const { createMessage } = await import("../Tables/messages.js");
         const message = await createMessage(channelId, socket.userId, content);
 
-        // Prepare message with user info
         const messageData = {
           id: message.id,
           channelId,
@@ -140,7 +126,6 @@ export const initializeSocket = (server, app) => {
         const { channelId } = data;
         const room = `channel:${channelId}`;
 
-        // Broadcast "user is typing" to others
         socket.to(room).emit("user-typing", {
           userId: socket.userId,
           username: socket.username,
@@ -165,7 +150,6 @@ export const initializeSocket = (server, app) => {
       }
     });
 
-    // ==================== WORKSPACE PRESENCE ====================
 
     socket.on("workspace-active", (workspaceId) => {
       try {
@@ -173,7 +157,6 @@ export const initializeSocket = (server, app) => {
         socket.join(room);
         console.log(`🟢 ${socket.username} active in workspace ${workspaceId}`);
 
-        // Notify others that user is online
         io.to(room).emit("user-online", {
           userId: socket.userId,
           username: socket.username,
@@ -183,13 +166,11 @@ export const initializeSocket = (server, app) => {
       }
     });
 
-    // ==================== DISCONNECT ====================
 
     socket.on("disconnect", () => {
       try {
         console.log(`❌ User ${socket.username} disconnected: ${socket.id}`);
 
-        // Remove socket from tracking
         if (userSockets[socket.userId]) {
           userSockets[socket.userId] = userSockets[socket.userId].filter(
             (s) => s.id !== socket.id
@@ -210,14 +191,12 @@ export const initializeSocket = (server, app) => {
       }
     });
 
-    // ==================== ERROR HANDLING ====================
 
     socket.on("error", (err) => {
       console.error("Socket error:", err);
     });
   });
 
-  // Store io instance for access in controllers
   app.set("io", io);
 
   return io;

@@ -2,16 +2,26 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/auth/authSlice.js";
 import { fetchWorkspacesSuccess } from "../../features/workspace/workspaceSlice.js";
-import { ChevronDown, ChevronRight, LayoutDashboard, Settings, Briefcase, Menu, X, ChevronLeft } from "lucide-react";
+import { 
+  ChevronDown, 
+  ChevronRight, 
+  LayoutDashboard, 
+  Settings, 
+  Briefcase, 
+  LogOut, 
+  ChevronLeft, 
+  Menu,
+  Box,
+  Plus
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserWorkspaces } from "../services/workspace.js";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar({ open, setOpen }) {
-    const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+    const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(true);
     const dispatch = useDispatch();
     const { workspaces } = useSelector((state) => state.workspace);
-    // const { token } = useSelector((state) => state.auth);
-    // const { logout } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,85 +47,111 @@ export default function Sidebar({ open, setOpen }) {
     };
 
     return (
-        <div
+        <motion.div
+            animate={{ width: open ? 280 : 80 }}
             className={`
-    bg-gray-200 text-black
-    fixed md:static
-    top-0 left-0 z-50
-    min-h-screen
-    ${open ? "w-64" : "w-16"}
-    ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-    transition-all duration-300 shadow-xl
-  `}
+                bg-[#F8FAFC] border-r border-gray-200 text-slate-900
+                fixed md:static h-screen flex flex-col
+                top-0 left-0 z-50
+                ${!open ? "-translate-x-full md:translate-x-0" : "translate-x-0"}
+                transition-all duration-300 shadow-2xl
+            `}
         >
             <button
                 onClick={() => setOpen(!open)}
-                className="absolute -right-3 top-5 bg-white text-black px-2 py-1 rounded shadow-md border border-gray-100"
+                className="absolute -right-4 top-10 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-slate-600 shadow-md transition-all hover:text-teal-600 hover:scale-110 z-50"
             >
-                {open ? "◀" : "▶"}
+                {open ? <ChevronLeft size={16} /> : <Menu size={16} />}
             </button>
 
-            <div className="p-6 text-2xl font-bold font-poppins flex items-center gap-2">
-                <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white text-sm">F</div>
-                {open && <span>FlowSpace</span>}
+            <div className="p-6 mb-2">
+                <div className={`flex items-center gap-3 ${!open ? "justify-center" : ""}`}>
+                    <div className="min-w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-lg shadow-teal-200">
+                        F
+                    </div>
+                    {open && (
+                        <div className="flex flex-col">
+                            <span className="text-lg font-bold tracking-tight font-poppins text-slate-900 leading-tight">
+                                FlowSpace
+                            </span>
+                            <span className="text-xs font-medium text-slate-400">Platform</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <nav className="mt-5 flex flex-col px-3 gap-1">
-                <Link to="/dashboard" className="flex items-center gap-3 p-3 hover:bg-white rounded-xl transition-all duration-200 group">
-                    <LayoutDashboard size={20} className="text-gray-500 group-hover:text-black" />
-                    {open && <span className="font-poppins text-lg font-medium text-gray-700 group-hover:text-black">Dashboard</span>}
+            <nav className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-1">
+                <Link to="/dashboard" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group hover:bg-slate-100 ${!open ? "justify-center" : ""}`}>
+                    <LayoutDashboard size={20} className="text-slate-400 group-hover:text-teal-600" />
+                    {open && <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Dashboard</span>}
                 </Link>
+
+                <div className="my-4 border-t border-slate-100" />
 
                 <div className="flex flex-col">
                     <button
                         onClick={() => open && setIsWorkspaceOpen(!isWorkspaceOpen)}
-                        className="flex items-center justify-between p-3 hover:bg-white rounded-xl transition-all duration-200 group w-full"
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group hover:bg-slate-100 ${!open ? "justify-center" : ""}`}
                     >
                         <div className="flex items-center gap-3">
-                            <Briefcase size={20} className="text-gray-500 group-hover:text-black" />
-                            {open && <span className="font-poppins text-lg font-medium text-gray-700 group-hover:text-black">My Workspaces</span>}
+                            <Briefcase size={20} className="text-slate-400 group-hover:text-teal-600" />
+                            {open && <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Workspaces</span>}
                         </div>
-                        {open && (isWorkspaceOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
+                        {open && (
+                            <motion.span animate={{ rotate: isWorkspaceOpen ? 0 : -90 }}>
+                                <ChevronDown size={14} className="text-slate-400" />
+                            </motion.span>
+                        )}
                     </button>
 
-                    {open && isWorkspaceOpen && (
-                        <div className="flex flex-col ml-9 mt-1 gap-1 border-l-2 border-gray-300">
-                            {
-                                workspaces.length > 0 ? (
-                                   <>
-                                     {
-                                        workspaces.map((w) => (
-                                            <button
-                                                key={w.id}
-                                                onClick={() => handleWorkspaceClick(w.id)}
-                                                className="p-2 pl-4 text-left text-sm font-poppins text-gray-600 hover:text-black hover:bg-white rounded-lg transition-all w-full"
-                                            >
-                                                {w.name}
-                                            </button>
-                                        ))
-                                    }
-                                   </>
+                    <AnimatePresence>
+                        {open && isWorkspaceOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden mt-1 flex flex-col gap-1 ml-4 border-l-2 border-slate-100"
+                            >
+                                {workspaces.length > 0 ? (
+                                    workspaces.map((w) => (
+                                        <button
+                                            key={w.id}
+                                            onClick={() => handleWorkspaceClick(w.id)}
+                                            className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 hover:bg-teal-50 hover:text-teal-700 transition-all"
+                                        >
+                                            <Box size={14} className="text-slate-300 group-hover:text-teal-400" />
+                                            <span className="truncate">{w.name}</span>
+                                        </button>
+                                    ))
                                 ) : (
-                                    <div className="p-2 pl-4 text-sm font-poppins text-gray-400 italic">
+                                    <div className="px-4 py-2 text-xs text-slate-400 italic font-medium">
                                         No workspaces yet
                                     </div>
-                                )
-                            }
-                        </div>
-                    )}
+                                )}
+                                <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold text-teal-600 hover:bg-teal-50 transition-colors uppercase tracking-widest mt-2">
+                                    <Plus size={14} />
+                                    <span>Create New</span>
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
-
-                <Link to="/settings" className="flex items-center gap-3 p-3 hover:bg-white rounded-xl transition-all duration-200 group mt-auto">
-                    <Settings size={20} className="text-gray-500 group-hover:text-black" />
-                    {open && <span className="font-poppins text-lg font-medium text-gray-700 group-hover:text-black">Settings</span>}
-                </Link>
             </nav>
 
-            <div className="p-3 mt-5 hover:bg-white rounded-xl transition-all duration-200 group cursor-pointer"
-                onClick={handleLogout}
-            >
-                Logout
+            <div className="p-4 bg-slate-50 border-t border-slate-200">
+                <Link to="/settings" className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all ${!open ? "justify-center" : ""}`}>
+                    <Settings size={20} className="text-slate-400" />
+                    {open && <span className="text-sm font-semibold">Settings</span>}
+                </Link>
+                
+                <button
+                    onClick={handleLogout}
+                    className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-700 transition-all mt-1 ${!open ? "justify-center" : ""}`}
+                >
+                    <LogOut size={20} className="text-red-500" />
+                    {open && <span className="text-sm font-semibold">Log out</span>}
+                </button>
             </div>
-        </div>
+        </motion.div>
     );
 }

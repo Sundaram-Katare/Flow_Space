@@ -37,7 +37,7 @@ export const createMessage = async (channelId, userId, content) => {
 export const getChannelMessages = async (channelId, limit = 50, offset = 0) => {
   try {
     const result = await pool.query(
-      `SELECT m.*, u.username, u.avatar
+      `SELECT m.*, u.username, u.profile_picture
        FROM messages m
        JOIN users u ON m.user_id = u.id
        WHERE m.channel_id = $1

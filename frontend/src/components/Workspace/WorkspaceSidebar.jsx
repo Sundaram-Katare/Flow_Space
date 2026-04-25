@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { logout } from "../../../features/auth/authSlice";
 import { clearWorkspaces } from "../../../features/workspace/workspaceSlice";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageCircle,
   CheckSquare,
@@ -12,10 +13,27 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
+  LayoutDashboard,
+  ChevronDown,
+  Hash,
+  Settings,
 } from "lucide-react";
 
-export default function WorkspaceSidebar({ open, setOpen }) {
-  const [channels] = useState(["general", "development", "random"]);
+export default function WorkspaceSidebar({ 
+  open, 
+  setOpen, 
+  activeItem, 
+  setActiveItem, 
+  activeChannel, 
+  setActiveChannel,
+  channels,
+  members,
+  loading
+}) {
+  const { id: workspaceId } = useParams();
+  const [isChannelsOpen, setIsChannelsOpen] = useState(true);
+  const [isMembersOpen, setIsMembersOpen] = useState(false);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,126 +43,231 @@ export default function WorkspaceSidebar({ open, setOpen }) {
     navigate("/auth");
   };
 
+  const navItems = [
+    { id: "chats", icon: <MessageCircle size={20} />, text: "Chats" },
+    { id: "tasks", icon: <CheckSquare size={20} />, text: "Tasks" },
+    { id: "docs", icon: <FileText size={20} />, text: "Docs" },
+  ];
+
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300 md:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      <div
-        className={`fixed top-0 left-0 z-50 h-screen bg-[#36C7B5] text-black shadow-xl overflow-y-auto no-scrollbar transition-all duration-300 ease-in-out md:relative ${
-          open ? "w-64 translate-x-0" : "w-20 -translate-x-full md:translate-x-0"
+      <motion.div
+        animate={{ width: open ? 280 : 80 }}
+        className={`fixed top-0 left-0 z-50 h-screen bg-[#F8FAFC] border-r border-gray-200 text-slate-900 shadow-2xl flex flex-col transition-all duration-300 ease-in-out md:relative ${
+          !open ? "-translate-x-full md:translate-x-0" : "translate-x-0"
         }`}
       >
         <button
           onClick={() => setOpen(!open)}
-          className="absolute -right-3 top-10 z-[60] flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white text-black shadow-lg transition-transform hover:scale-110"
+          className="absolute -right-4 top-10 z-[60] flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-slate-600 shadow-md transition-all hover:text-teal-600 hover:scale-110"
         >
-          {open ? <ChevronLeft size={18} /> : <Menu size={18} />}
+          {open ? <ChevronLeft size={16} /> : <Menu size={16} />}
         </button>
 
-        <div
-          className={`flex items-center gap-3 p-6 transition-all duration-300 ${
-            open ? "justify-start" : "justify-center"
-          }`}
-        >
-          <div className="min-w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center text-xl font-bold shadow-lg">
-            B
-          </div>
-
-          {open && (
-            <span className="text-2xl font-bold tracking-tight font-poppins animate-in fade-in duration-500">
-              Byte Blaze
-            </span>
-          )}
+        <div className="p-6 mb-2">
+          <Link
+            to="/dashboard"
+            className={`flex items-center gap-3 group px-2 py-1 rounded-xl transition-all hover:bg-teal-50 ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <div className="min-w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-lg shadow-teal-200 group-hover:scale-105 transition-transform">
+              F
+            </div>
+            {open && (
+              <div className="flex flex-col">
+                <span className="text-lg font-bold tracking-tight font-poppins text-slate-900 leading-tight text-nowrap truncate max-w-[150px]">
+                  FlowSpace
+                </span>
+                <span className="text-xs font-medium text-slate-400">Workspace</span>
+              </div>
+            )}
+          </Link>
         </div>
 
-        <nav className="mt-8 flex h-[calc(100vh-120px)] flex-col gap-2 px-4">
-          <SidebarItem
-            open={open}
-            icon={<MessageCircle size={22} />}
-            text="Chats"
-          />
-          <SidebarItem
-            open={open}
-            icon={<CheckSquare size={22} />}
-            text="Tasks"
-          />
-          <SidebarItem
-            open={open}
-            icon={<FileText size={22} />}
-            text="Docs"
-          />
-          <SidebarItem
-            open={open}
-            icon={<Users size={22} />}
-            text="Members"
-          />
+        <nav className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-1">
+          <Link
+            to="/dashboard"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group hover:bg-slate-100 ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <LayoutDashboard size={20} className="text-slate-400 group-hover:text-teal-600" />
+            {open && (
+              <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">
+                Dashboard
+              </span>
+            )}
+          </Link>
 
-          {open && (
-            <div className="mt-6 animate-in slide-in-from-left-2 px-2 duration-300">
-              <p className="mb-4 text-xs font-bold tracking-widest text-[#2a9d8f] opacity-70">
-                CHANNELS
-              </p>
+          <div className="my-4 border-t border-slate-100" />
 
-              <div className="ml-2 flex flex-col gap-1 border-l-2 border-[#2a9d8f]/30 py-1">
-                {channels.map((channel) => (
-                  <button
-                    key={channel}
-                    className="rounded-xl p-2 pl-4 text-left text-[15px] font-poppins text-gray-800 transition-all hover:bg-white/40 hover:text-black"
-                  >
-                    # {channel}
-                  </button>
-                ))}
-              </div>
-
-              <button className="mt-4 flex items-center gap-2 p-2 pl-4 text-sm font-medium font-poppins text-black/60 transition-colors hover:text-black">
-                <Plus size={16} />
-                Add Channel
-              </button>
-            </div>
-          )}
-
-          <div className="mt-auto">
+          {navItems.map((item) => (
             <button
-              onClick={handleLogout}
-              className={`flex w-full items-center gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-white/40 ${
+              key={item.id}
+              onClick={() => {
+                setActiveItem(item.id);
+                setActiveChannel(null);
+                if (window.innerWidth < 768) setOpen(false);
+              }}
+              className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${
+                activeItem === item.id && !activeChannel ? "bg-teal-50 text-teal-700" : "text-slate-600 hover:bg-slate-100"
+              } ${!open ? "justify-center" : ""}`}
+            >
+              <span className={`${activeItem === item.id  && !activeChannel ? "text-teal-600" : "text-slate-400 group-hover:text-slate-600"}`}>
+                {item.icon}
+              </span>
+              {open && <span className="text-sm font-semibold">{item.text}</span>}
+              {activeItem === item.id && !activeChannel && (
+                <motion.div
+                  layoutId="activeBar"
+                  className="absolute left-0 w-1 h-6 bg-teal-600 rounded-r-full"
+                />
+              )}
+            </button>
+          ))}
+
+          {/* Channels Section */}
+          <div className="mt-6 px-2">
+            <button
+              onClick={() => open && setIsChannelsOpen(!isChannelsOpen)}
+              className={`flex w-full items-center justify-between py-2 text-xs font-bold tracking-widest text-slate-400 uppercase transition-colors hover:text-slate-600 ${
                 !open ? "justify-center" : ""
               }`}
             >
-              <LogOut size={22} className="text-red-600" />
-              {open && (
-                <span className="text-lg font-bold font-poppins text-red-600">
-                  Logout
-                </span>
+              {open ? (
+                <>
+                  <span>Channels</span>
+                  <motion.span animate={{ rotate: isChannelsOpen ? 0 : -90 }}>
+                    <ChevronDown size={14} />
+                  </motion.span>
+                </>
+              ) : (
+                <Hash size={18} />
               )}
             </button>
+
+            <AnimatePresence>
+              {open && isChannelsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden mt-2 flex flex-col gap-1 ml-1"
+                >
+                  {channels.map((channel) => (
+                    <button
+                      key={channel.id}
+                      onClick={() => {
+                        setActiveChannel(channel.id);
+                        if (window.innerWidth < 768) setOpen(false);
+                      }}
+                      className={`group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                        activeChannel === channel.id
+                          ? "bg-slate-200 text-slate-900 shadow-sm"
+                          : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                      }`}
+                    >
+                      <Hash size={14} className={activeChannel === channel.id ? "text-teal-600" : "text-slate-300 group-hover:text-slate-400"} />
+                      <span className="truncate">{channel.name}</span>
+                    </button>
+                  ))}
+                  <button 
+                    onClick={() => {
+                      setActiveChannel(null);
+                      setActiveItem("create-channel");
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-teal-600 hover:bg-teal-50 transition-colors"
+                  >
+                    <Plus size={14} />
+                    <span>Add Channel</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Members Section */}
+          <div className="mt-4 px-2">
+             <button
+              onClick={() => open && setIsMembersOpen(!isMembersOpen)}
+              className={`flex w-full items-center justify-between py-2 text-xs font-bold tracking-widest text-slate-400 uppercase transition-colors hover:text-slate-600 ${
+                !open ? "justify-center" : ""
+              }`}
+            >
+              {open ? (
+                <>
+                  <span>Members ({members.length})</span>
+                  <motion.span animate={{ rotate: isMembersOpen ? 0 : -90 }}>
+                    <ChevronDown size={14} />
+                  </motion.span>
+                </>
+              ) : (
+                <Users size={18} />
+              )}
+            </button>
+
+            <AnimatePresence>
+              {open && isMembersOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden mt-2 flex flex-col gap-1 ml-1"
+                >
+                  {members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 transition-all cursor-default"
+                    >
+                      <div className="w-5 h-5 rounded-md bg-teal-100 text-teal-600 flex items-center justify-center text-[8px] font-bold">
+                        {String(member.user_id).charAt(0).toUpperCase()}
+                      </div>
+                      <span className="truncate">{member.user_id}</span>
+                      {member.role === 'admin' && (
+                        <span className="text-[8px] px-1 bg-teal-50 text-teal-600 border border-teal-100 rounded">Admin</span>
+                      )}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </nav>
-      </div>
+
+        <div className="p-4 bg-slate-50 border-t border-slate-200">
+          <button
+            className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <Settings size={20} className="text-slate-400" />
+            {open && <span className="text-sm font-semibold">Settings</span>}
+          </button>
+          
+          <button
+            onClick={handleLogout}
+            className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-700 transition-all mt-1 ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <LogOut size={20} className="text-red-500" />
+            {open && <span className="text-sm font-semibold">Log out</span>}
+          </button>
+        </div>
+      </motion.div>
     </>
-  );
-}
-
-function SidebarItem({ icon, text, open }) {
-  return (
-    <button
-      className={`flex w-full items-center gap-4 rounded-2xl p-3 transition-all duration-200 hover:bg-white/40 group ${
-        !open ? "justify-center" : ""
-      }`}
-    >
-      <span className="text-black/60 transition-colors group-hover:text-black">
-        {icon}
-      </span>
-
-      {open && (
-        <span className="text-lg font-medium font-poppins text-black group-hover:font-semibold">
-          {text}
-        </span>
-      )}
-    </button>
   );
 }

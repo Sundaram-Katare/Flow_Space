@@ -6,9 +6,28 @@ import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
 import WorkspaceLayout from "./layout/WorkspaceLayout";
 import Workspace from "./pages/Workspace";
-
+import { getCurrentUser } from "./services/auth.js";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { setUser } from "../features/auth/authSlice.js";
 
 function App() {
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+    if (token) {
+      const loadUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          dispatch(setUser(user));
+        } catch (err) {
+          console.error("Failed to load user:", err);
+        }
+      };
+      loadUser();
+    }
+  }, [token, dispatch]);
 
   return (
     <>

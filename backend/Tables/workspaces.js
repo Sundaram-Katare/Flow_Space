@@ -9,7 +9,7 @@ export const createWorkspacesTable = async () => {
         name VARCHAR(255) NOT NULL,
         description TEXT,
         workspace_code VARCHAR(20) UNIQUE,
-        avatar TEXT,
+        profile_picture TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -115,7 +115,7 @@ export const getWorkspaceWithMembers = async (workspaceId) => {
     const workspace = getWorkspaceById(workspaceId);
 
     const members = await pool.query(`
-       SELECT u.id, u.username, u.email, u.avatar, wm.role, wm.joined_at
+       SELECT u.id, u.username, u.email, u.profile_picture, wm.role, wm.joined_at
        FROM workspace_members wm
        JOIN users u ON wm.user_id = u.id
        WHERE wm.workspace_id = $1

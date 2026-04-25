@@ -7,21 +7,22 @@ import {
 import {
   getMemberRole,
 } from "../Tables/workspace_members.js";
-// import { cache } from "../services/cache.js";
+import * as cache from "../services/cache.js";
 
 export const createChannelController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { workspaceId, name, description, channelType } = req.body;
+    const { workspaceId } = req.params;
+    const { name, description, channelType } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: "Channel name required" });
     }
 
-    const role = await getMemberRole(workspaceId, userId);
-    if (role !== "admin") {
-      return res.status(403).json({ error: "Only admins can create channels" });
-    }
+    // const role = await getMemberRole(workspaceId, userId);
+    // if (role !== "admin") {
+    //   return res.status(403).json({ error: "Only admins can create channels" });
+    // }
 
     const channel = await createChannel(
       workspaceId,

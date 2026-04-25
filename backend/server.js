@@ -8,18 +8,14 @@ import authRoutes from "./routes/authRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import channelRoutes from './routes/channelRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
-
+import { initializeSocket } from './config/socket.js';
+import { initializeRedisSubscriber } from './services/redisSubscriber.js';
 import { initializeTables } from './db/init.js';
 
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, {
-    cors: {
-        origin: env.frontend_url,
-        methods: ['GET', 'POST'], 
-    },
-});
+const io = initializeSocket(server, app);
 
 app.use(express.json());
 app.use(cors());
@@ -37,6 +33,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
+initializeRedisSubscriber(io).catch((err) => {
+  console.error("Failed to initialize  Redis Subscriber: ", err);
+})
+
 //Health Check
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Server is running" });
@@ -52,9 +52,71 @@ app.use((req, res, next) => {
     next();
 });
 
+import { verifyToken } from './services/jwt.js';
+import { createMessage } from './Tables/messages.js';
+import { getUserById } from './Tables/users.js';
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication error: Token missing'));
+  }
+  try {
+    const decoded = verifyToken(token);
+    socket.userId = decoded.userId;
+    next();
+  } catch (err) {
+    next(new Error('Authentication error: Invalid token'));
+  }
+});
+
 io.on('connection', (socket) => {
-  logger.info(`User connected: ${socket.id}`);
-  
+  logger.info(`User connected: ${socket.id} (User ID: ${socket.userId})`);
+
+  socket.on('join-channel', (channelId) => {
+    socket.join(`channel:${channelId}`);
+    logger.info(`User ${socket.userId} joined channel: ${channelId}`);
+  });
+
+  socket.on('leave-channel', (channelId) => {
+    socket.leave(`channel:${channelId}`);
+    logger.info(`User ${socket.userId} left channel: ${channelId}`);
+  });
+
+  socket.on('send-message', async ({ channelId, content }) => {
+    try {
+      const user = await getUserById(socket.userId);
+      const message = await createMessage(channelId, socket.userId, content);
+      
+      const messageData = {
+        ...message,
+        username: user.username,
+        profile_picture: user.profile_picture
+      };
+
+      io.to(`channel:${channelId}`).emit('message-received', messageData);
+    } catch (err) {
+      logger.error('Error sending message:', err);
+    }
+  });
+
+  socket.on('typing', ({ channelId }) => {
+    getUserById(socket.userId).then(user => {
+      socket.to(`channel:${channelId}`).emit('user-typing', {
+        userId: socket.userId,
+        username: user.username,
+        channelId
+      });
+    });
+  });
+
+  socket.on('stop-typing', ({ channelId }) => {
+    socket.to(`channel:${channelId}`).emit('user-stop-typing', {
+      userId: socket.userId,
+      channelId
+    });
+  });
+
   socket.on('disconnect', () => {
     logger.info(`User disconnected: ${socket.id}`);
   });
