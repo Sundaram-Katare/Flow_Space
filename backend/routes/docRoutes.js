@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyAuth } from "../../middleware/authMiddleware.js";
+import { verifyAuth } from "../middleware/authMiddleware.js";
 import {
   createDocController,
   getWorkspaceDocsController,
@@ -9,7 +9,7 @@ import {
   addBlockController,
   deleteBlockController,
   deleteDocController,
-} from "./docController.js";
+} from "../controllers/docsController.js";
 
 const router = express.Router();
 

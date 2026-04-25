@@ -127,3 +127,88 @@ export const removeEventListener = (event) => {
     socket.off(event);
   }
 };
+
+// Document events
+export const openDoc = (docId) => {
+  if (socket) {
+    socket.emit("open-doc", docId);
+  }
+};
+
+export const closeDoc = (docId) => {
+  if (socket) {
+    socket.emit("close-doc", docId);
+  }
+};
+
+export const docTyping = (docId, blockId, position) => {
+  if (socket) {
+    socket.emit("doc-typing", { docId, blockId, position });
+  }
+};
+
+export const docStopTyping = (docId) => {
+  if (socket) {
+    socket.emit("doc-stop-typing", docId);
+  }
+};
+
+export const onDocUpdated = (callback) => {
+  if (socket) {
+    socket.on("doc-updated", callback);
+  }
+};
+
+export const onDocBlockUpdated = (callback) => {
+  if (socket) {
+    socket.on("doc-block-updated", callback);
+  }
+};
+
+export const onDocBlockAdded = (callback) => {
+  if (socket) {
+    socket.on("doc-block-added", callback);
+  }
+};
+
+export const onDocBlockDeleted = (callback) => {
+  if (socket) {
+    socket.on("doc-block-deleted", callback);
+  }
+};
+
+export const onDocUserJoined = (callback) => {
+  if (socket) {
+    socket.on("doc-user-joined", callback);
+  }
+};
+
+export const onDocUserLeft = (callback) => {
+  if (socket) {
+    socket.on("doc-user-left", callback);
+  }
+};
+
+export const onUserDocTyping = (callback) => {
+  if (socket) {
+    socket.on("user-doc-typing", callback);
+  }
+};
+
+export const onUserDocStopTyping = (callback) => {
+  if (socket) {
+    socket.on("user-doc-stop-typing", callback);
+  }
+};
+
+export const onDocCreated = (callback) => {
+  if (socket) {
+    socket.on("doc-created", callback);
+  }
+};
+
+export const onDocDeleted = (callback) => {
+  if (socket) {
+    socket.on("doc-deleted", callback);
+  }
+};

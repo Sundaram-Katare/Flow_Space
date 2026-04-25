@@ -3,6 +3,7 @@ import authReducer from '../features/auth/authSlice.js';
 import workspaceReducer from '../features/workspace/workspaceSlice.js';
 import chatReducer from '../features/chat/chatSlice.js';
 import taskReducer from '../features/task/taskSlice.js';
+import docReducer from '../features/docs/docSlice.js';
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         workspace: workspaceReducer,
         chat: chatReducer,
         tasks: taskReducer,
+        docs: docReducer,
     },
 });
 

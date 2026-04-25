@@ -1,7 +1,7 @@
 import WorkspaceSidebar from "../components/Workspace/WorkspaceSidebar";
 import WorkspaceTopbar from "../components/Workspace/WorkspaceTopbar";
 import { useState, useEffect } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { connectSocket, disconnectSocket } from "../services/socket";
 import { getWorkspaceChannels } from "../services/chat";
@@ -9,6 +9,7 @@ import { getWorkspaceMembers } from "../services/workspace";
 
 export default function WorkspaceLayout() {
   const { id: workspaceId } = useParams();
+  const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(window.innerWidth > 768);
   const [activeItem, setActiveItem] = useState("chats");
@@ -45,6 +46,16 @@ export default function WorkspaceLayout() {
     };
     fetchData();
   }, [workspaceId]);
+
+    useEffect(() => {
+    if (activeItem === "tasks") {
+      navigate("tasks");
+    } else if (activeItem === "docs") {
+      navigate("docs");
+    } else if (activeItem === "chats" && channels.length > 0) {
+      navigate(`chat/${channels[0].id}`);
+    }
+  }, [activeItem, channels, navigate]);
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] font-poppins overflow-hidden">
