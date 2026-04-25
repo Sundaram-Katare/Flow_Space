@@ -23,17 +23,17 @@ export const createTasksTable = async () => {
   }
 };
 
-export const createTask = async (workspaceId, title, description, createdBy, assignedTo = null) => {
+export const createTask = async (workspaceId, title, description, createdBy, assignedTo = null, priority = "medium") => {
   try {
     const result = await pool.query(
-      `INSERT INTO tasks (workspace_id, title, description, created_by, assigned_to)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO tasks (workspace_id, title, description, created_by, assigned_to, priority)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [workspaceId, title, description, createdBy, assignedTo]
+      [workspaceId, title, description, createdBy, assignedTo, priority]
     );
     return result.rows[0];
   } catch (err) {
-    console.log("Error Creating Task:", err);
+    console.log("❌ Error Creating Task:", err);
     throw err;
   }
 };
@@ -83,6 +83,60 @@ export const deleteTask = async (taskId) => {
     await pool.query('DELETE FROM tasks WHERE id = $1', [taskId]);
   } catch (err) {
     console.log("Error Deleting Task:", err);
+    throw err;
+  }
+};
+
+export const getTaskById = async (taskId) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM tasks WHERE id = $1',
+      [taskId]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.log("❌ Error Getting Task:", err);
+    throw err;
+  }
+};
+
+export const getTasksByStatus = async (workspaceId, status) => {
+  try {
+    const result = await pool.query(
+      `SELECT t.*, u.username as assigned_username, c.username as created_username
+       FROM tasks t
+       LEFT JOIN users u ON t.assigned_to = u.id
+       LEFT JOIN users c ON t.created_by = c.id
+       WHERE t.workspace_id = $1 AND t.status = $2
+       ORDER BY t.created_at DESC`,
+      [workspaceId, status]
+    );
+    return result.rows;
+  } catch (err) {
+    console.log("❌ Error Getting Tasks by Status:", err);
+    throw err;
+  }
+};
+
+export const getUserTasks = async (userId, workspaceId = null) => {
+  try {
+    let query = `SELECT t.*, w.name as workspace_name, c.username as created_username
+                 FROM tasks t
+                 JOIN workspaces w ON t.workspace_id = w.id
+                 WHERE t.assigned_to = $1`;
+    let params = [userId];
+
+    if (workspaceId) {
+      query += ` AND t.workspace_id = $2`;
+      params.push(workspaceId);
+    }
+
+    query += ` ORDER BY t.created_at DESC`;
+
+    const result = await pool.query(query, params);
+    return result.rows;
+  } catch (err) {
+    console.log("❌ Error Getting User Tasks:", err);
     throw err;
   }
 };
