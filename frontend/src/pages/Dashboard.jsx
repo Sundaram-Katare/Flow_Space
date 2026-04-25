@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CreateWorkspaceCard from "../components/CreateWorkspaceCard";
@@ -9,16 +9,18 @@ import { Sparkles, ArrowRight } from "lucide-react";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { token, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!token) {
       navigate("/auth");
+    } else {
+      // dispatch
     }
   }, [token, navigate]);
 
   return (
     <div className="min-h-full bg-[#FDFDFD] p-6 lg:p-12 space-y-12 overflow-y-auto no-scrollbar">
-      {/* Navbar/Header */}
       <header className="flex justify-between items-center">
         <div className="flex flex-col">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -79,7 +81,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Actions Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className=" grid grid-cols-1 lg:grid-cols-2 gap-8">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -97,4 +99,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+}

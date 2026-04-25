@@ -110,7 +110,7 @@ export default function Sidebar({ open, setOpen }) {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden mt-1 flex flex-col gap-1 ml-4 border-l-2 border-slate-100"
+                                className="overflow-hidden mt-1 flex flex-col gap-1 ml-4 border-l-2 border-slate-400"
                             >
                                 {workspaces.length > 0 ? (
                                     workspaces.map((w) => (
@@ -119,8 +119,8 @@ export default function Sidebar({ open, setOpen }) {
                                             onClick={() => handleWorkspaceClick(w.id)}
                                             className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 hover:bg-teal-50 hover:text-teal-700 transition-all"
                                         >
-                                            <Box size={14} className="text-slate-300 group-hover:text-teal-400" />
-                                            <span className="truncate">{w.name}</span>
+                                            <Box size={14} className="text-slate-900 group-hover:text-teal-400" />
+                                            <span className="truncate text-slate-900">{w.name}</span>
                                         </button>
                                     ))
                                 ) : (
