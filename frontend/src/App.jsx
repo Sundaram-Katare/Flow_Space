@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
 import WorkspaceLayout from "./layout/WorkspaceLayout";
 import Workspace from "./pages/Workspace";
+import Settings from "./pages/Settings";
 import { getCurrentUser } from "./services/auth.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -39,6 +40,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
 
             <Route path="/workspace/:id" element={<WorkspaceLayout />}>

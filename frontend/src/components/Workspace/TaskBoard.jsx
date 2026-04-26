@@ -1,5 +1,17 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Plus, 
+  Layout, 
+  ListTodo, 
+  RotateCcw, 
+  CheckCircle2, 
+  Search,
+  Filter,
+  MoreVertical,
+  Loader2
+} from "lucide-react";
 import {
   setTasks,
   addTask,
@@ -23,6 +35,7 @@ export default function TaskBoard({ workspaceId }) {
   const { tasksByStatus, isLoading } = useSelector((state) => state.tasks);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [draggedTask, setDraggedTask] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Load tasks on mount
   useEffect(() => {
@@ -86,21 +99,16 @@ export default function TaskBoard({ workspaceId }) {
 
     if (!draggedTask) return;
 
-    // If already in same status, do nothing
     if (draggedTask.status === newStatus) {
       setDraggedTask(null);
       return;
     }
 
     try {
-      // Update in backend
       await updateTaskStatusAPI(draggedTask.id, workspaceId, newStatus);
-
-      // Update local state
       dispatch(updateTaskStatus({ taskId: draggedTask.id, status: newStatus }));
     } catch (err) {
       console.error("Failed to update task status:", err);
-      alert("Failed to move task");
     } finally {
       setDraggedTask(null);
     }
@@ -118,39 +126,136 @@ export default function TaskBoard({ workspaceId }) {
       dispatch(addTask(data.task));
       setShowCreateForm(false);
     } catch (err) {
-      alert("Failed to create task");
+      console.error("Failed to create task:", err);
     }
   };
 
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Delete this task?")) return;
-
     try {
       await deleteTaskAPI(taskId, workspaceId);
       dispatch(deleteTaskAction(taskId));
     } catch (err) {
-      alert("Failed to delete task");
+      console.error("Failed to delete task:", err);
     }
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center">Loading tasks...</div>;
+    return (
+      <div className="h-full flex flex-col items-center justify-center space-y-4 bg-[#FDFDFD]">
+        <Loader2 className="w-12 h-12 text-teal-600 animate-spin" />
+        <p className="text-slate-500 font-medium">Loading your board...</p>
+      </div>
+    );
   }
 
+  const columns = [
+    { id: "todo", title: "To Do", icon: ListTodo, color: "teal", tasks: tasksByStatus.todo },
+    { id: "in_progress", title: "In Progress", icon: RotateCcw, color: "blue", tasks: tasksByStatus.in_progress },
+    { id: "done", title: "Done", icon: CheckCircle2, color: "emerald", tasks: tasksByStatus.done },
+  ];
+
   return (
-    <div className="p-6 h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-auto">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-gray-800">📊 Task Board</h2>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-lg"
-        >
-          + New Task
-        </button>
+    <div className="h-full flex flex-col bg-[#FDFDFD]">
+      {/* Header Section */}
+      <div className="p-8 pb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-teal-100 text-teal-700 rounded-xl">
+                <Layout size={24} />
+              </div>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Task Board</h1>
+            </div>
+            <p className="text-slate-500 font-medium ml-12">Manage and track your team's progress</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2.5 bg-slate-100 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-teal-500/20 w-64 transition-all"
+              />
+            </div>
+            <button className="p-2.5 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-all">
+              <Filter size={20} />
+            </button>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-xl hover:bg-teal-700 font-bold shadow-lg shadow-teal-200/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Plus size={18} />
+              <span>New Task</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Create Task Form */}
+      {/* Board Content */}
+      <div className="flex-1 overflow-x-auto p-8 pt-4">
+        <div className="flex gap-8 h-full min-w-max">
+          {columns.map((column) => (
+            <div
+              key={column.id}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, column.id)}
+              className="w-80 lg:w-96 flex flex-col bg-slate-50/50 rounded-[24px] border border-slate-100 overflow-hidden"
+            >
+              {/* Column Header */}
+              <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-white/50 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg bg-${column.color}-50 text-${column.color}-600`}>
+                    <column.icon size={18} />
+                  </div>
+                  <h3 className="font-bold text-slate-800 tracking-tight">{column.title}</h3>
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-bold">
+                    {column.tasks.length}
+                  </span>
+                </div>
+                <button className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-all">
+                  <MoreVertical size={16} />
+                </button>
+              </div>
+
+              {/* Task List */}
+              <div className="flex-1 bg-slate-100 p-4 space-y-4 overflow-y-auto no-scrollbar min-h-[400px]">
+                <AnimatePresence mode="popLayout">
+                  {column.tasks
+                    .filter(task => task.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((task) => (
+                      <motion.div
+                        key={task.id}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <TaskCard
+                          task={task}
+                          onDragStart={handleDragStart}
+                          onDelete={handleDeleteTask}
+                          workspaceId={workspaceId}
+                        />
+                      </motion.div>
+                    ))}
+                </AnimatePresence>
+                
+                {column.tasks.length === 0 && (
+                  <div className="h-40 flex flex-col items-center justify-center text-slate-400 space-y-2 border-2 border-dashed border-slate-200 rounded-2xl">
+                    <p className="text-sm font-medium">No tasks here</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Create Task Form Modal */}
       {showCreateForm && (
         <CreateTaskForm
           onCreate={handleCreateTask}
@@ -158,78 +263,6 @@ export default function TaskBoard({ workspaceId }) {
           workspaceId={workspaceId}
         />
       )}
-
-      {/* Kanban Board */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* TODO Column */}
-        <div
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, "todo")}
-          className="bg-white rounded-lg shadow-lg overflow-hidden"
-        >
-          <div className="bg-red-500 text-white p-4">
-            <h3 className="text-lg font-bold">📋 TODO</h3>
-            <p className="text-sm opacity-90">{tasksByStatus.todo.length} tasks</p>
-          </div>
-          <div className="p-4 space-y-3 min-h-96">
-            {tasksByStatus.todo.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onDragStart={handleDragStart}
-                onDelete={handleDeleteTask}
-                workspaceId={workspaceId}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* IN_PROGRESS Column */}
-        <div
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, "in_progress")}
-          className="bg-white rounded-lg shadow-lg overflow-hidden"
-        >
-          <div className="bg-yellow-500 text-white p-4">
-            <h3 className="text-lg font-bold">🔄 IN PROGRESS</h3>
-            <p className="text-sm opacity-90">{tasksByStatus.in_progress.length} tasks</p>
-          </div>
-          <div className="p-4 space-y-3 min-h-96">
-            {tasksByStatus.in_progress.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onDragStart={handleDragStart}
-                onDelete={handleDeleteTask}
-                workspaceId={workspaceId}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* DONE Column */}
-        <div
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, "done")}
-          className="bg-white rounded-lg shadow-lg overflow-hidden"
-        >
-          <div className="bg-green-500 text-white p-4">
-            <h3 className="text-lg font-bold">✅ DONE</h3>
-            <p className="text-sm opacity-90">{tasksByStatus.done.length} tasks</p>
-          </div>
-          <div className="p-4 space-y-3 min-h-96">
-            {tasksByStatus.done.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onDragStart={handleDragStart}
-                onDelete={handleDeleteTask}
-                workspaceId={workspaceId}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

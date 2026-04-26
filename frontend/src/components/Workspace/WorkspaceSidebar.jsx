@@ -250,14 +250,15 @@ export default function WorkspaceSidebar({
         </nav>
 
         <div className="p-4 bg-slate-50 border-t border-slate-200">
-          <button
+          <Link
+            to="/dashboard/settings"
             className={`flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all ${
               !open ? "justify-center" : ""
             }`}
           >
             <Settings size={20} className="text-slate-400" />
             {open && <span className="text-sm font-semibold">Settings</span>}
-          </button>
+          </Link>
           
           <button
             onClick={handleLogout}
