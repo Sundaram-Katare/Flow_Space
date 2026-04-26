@@ -17,7 +17,7 @@ const charVariants = {
 
 export default function Home() {
     const navigate = useNavigate();
-    
+
     return (
         <>
             <div className="bg-transparent min-h-screen mx-64 font-poppins ">
@@ -104,8 +104,8 @@ export default function Home() {
                         <div className=" grid grid-cols-2 gap-16 px-4">
                             <div className="rounded-md">
                                 <motion.img
-                                    initial={{ opacity: 1,  scale: 1,  }}
-                                    animate={{ rotate: [-20, -10, -20], opacity: 1, scale: 1 }} 
+                                    initial={{ opacity: 1, scale: 1, }}
+                                    animate={{ rotate: [-20, -10, -20], opacity: 1, scale: 1 }}
                                     transition={{
                                         duration: 4,
                                         repeat: Infinity,
@@ -117,8 +117,8 @@ export default function Home() {
 
                             <div className="rounded-md relative">
                                 <motion.img
-                                    initial={{ opacity: 1,  scale: 1,  }}
-                                    animate={{ rotate: [20, 10, 20], opacity: 1, scale: 1 }} 
+                                    initial={{ opacity: 1, scale: 1, }}
+                                    animate={{ rotate: [20, 10, 20], opacity: 1, scale: 1 }}
                                     transition={{
                                         duration: 4,
                                         repeat: Infinity,
@@ -131,8 +131,25 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
+
+                <motion.div className="bg-gray-200/60 backdrop-blur-md border border-white/20 
+            rounded-xl shadow-lg flex flex-col items-center h-full py-32 space-y-12"
+                    initial={{ opacity: 0, y: 200 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: easeInOut }}
+                >
+
+                    <div className="text-center">
+                        <motion.h1 className="text-black font-poppins font-semibold text-4xl">
+                            Empower Your
+                        </motion.h1>
+                        <motion.h1 className="text-black font-poppins mt-0 font-semibold text-4xl">
+                            team, achieve more
+                        </motion.h1>
+                    </div>
+
+                </motion.div>
             </div>
-                        <Features />
         </>
     )
 }

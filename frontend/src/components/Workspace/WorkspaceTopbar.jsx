@@ -35,9 +35,9 @@ export default function WorkspaceTopbar({ onMenuClick }) {
       />
 
       <div className="flex items-center gap-4">
-        <div onClick={handleCopyCode} className="hidden md:flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md cursor-pointer hover:bg-gray-200 transition">
-          <span className="text-sm font-medium">{code}</span>
-          <Copy size={16} />
+        <div onClick={handleCopyCode} className="flex items-center gap-2 bg-gray-100 px-2 sm:px-3 py-1 rounded-md cursor-pointer hover:bg-gray-200 transition text-xs sm:text-sm">
+          <span className="font-medium">{code}</span>
+          <Copy size={14} className="sm:w-4 sm:h-4 w-3 h-3" />
         </div>
         <div className="w-8 h-8 bg-[#36C7B5] rounded-full ring-2 ring-emerald-50 text-white flex items-center justify-center font-bold">{userInitial}</div>
       </div>

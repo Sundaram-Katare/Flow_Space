@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginSuccess, signupSuccess } from "../../features/auth/authSlice.js";
 import { signup, login } from "../services/auth.js";
+import { motion } from "framer-motion";
+
+const images = ["./auth1.png", "./auth2.webp" ];
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,9 +16,22 @@ export default function Auth() {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [image, setImage] = useState(images[0]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImage((prev) => {
+        const currentIndex = images.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % images.length;
+        return images[nextIndex];
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [image[0]]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,11 +125,11 @@ export default function Auth() {
               required
             />
 
-            <div className="text-right text-sm text-gray-500">
+            {/* <div className="text-right text-sm text-gray-500">
               <span className="cursor-pointer hover:text-gray-700">
                 Forgot Password?
               </span>
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -124,25 +140,7 @@ export default function Auth() {
             </button>
           </form>
 
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="text-gray-400 text-sm">or continue with</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
-          </div>
-
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-sm font-semibold">
-              G
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-sm font-semibold">
-              f
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-sm font-semibold">
-              
-            </button>
-          </div>
-
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-gray-500 text-center mt-4">
             {isLogin ? "Not a member?" : "Already have an account?"}{" "}
             <button
               onClick={() => setIsLogin(!isLogin)}
@@ -154,10 +152,13 @@ export default function Auth() {
         </div>
 
         <div className="hidden lg:flex items-center justify-center bg-gray-200 rounded-3xl m-4">
-          <img
-            src="https://file.aiquickdraw.com/imgcompressed/img/compressed_a7a6853ab6e49c60af6fd14f9e27c2b3.webp"
+          <motion.img
+            src={image}
             alt="illustration"
             className="w-[80%] object-contain"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </div>
 

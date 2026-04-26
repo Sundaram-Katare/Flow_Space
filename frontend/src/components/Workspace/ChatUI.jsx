@@ -29,6 +29,7 @@ import {
   onUserTyping,
   joinChannel,
   leaveChannel,
+  removeEventListener,
 } from "../../services/socket.js";
 import { deleteMessageAPI, getMessages } from "../../services/chat.js";
 
@@ -77,24 +78,31 @@ export default function ChatUI({ channel }) {
   }, [channel?.id, dispatch]);
 
   useEffect(() => {
-    onMessageReceived((messageData) => {
+    // Create handler functions that will be cleaned up
+    const handleMessageReceived = (messageData) => {
       // Only add if message belongs to current channel
       if (messageData.channelId === channel?.id) {
-          dispatch(addMessage(messageData));
+        dispatch(addMessage(messageData));
       }
-    });
+    };
 
-    onUserTyping((data) => {
+    const handleUserTyping = (data) => {
       if (data.channelId === channel?.id) {
         dispatch(addTypingUser(data));
         setTimeout(() => {
           dispatch(removeTypingUser(data.userId));
         }, 3000);
       }
-    });
+    };
 
+    // Register listeners only once per channel
+    onMessageReceived(handleMessageReceived);
+    onUserTyping(handleUserTyping);
+
+    // Cleanup: Remove listeners when component unmounts or channel changes
     return () => {
-        // Cleanup listeners if needed
+      removeEventListener("message-received");
+      removeEventListener("user-typing");
     };
   }, [dispatch, channel?.id]);
 

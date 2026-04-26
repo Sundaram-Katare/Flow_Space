@@ -31,7 +31,7 @@ function App() {
 
   return (
     <>
-      <div className="bg-[url('/homeBG.png')] no-repeat border-b border-4-black border-black">
+      <div className=" bg-gradient-to-b from-white to-[#26917F] no-repeat border-b border-4-black border-black">
         <BrowserRouter>
           <Toaster position="top-right" />
           <Routes>
