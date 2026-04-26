@@ -71,9 +71,9 @@ export default function Sidebar({ open, setOpen }) {
                     </div>
                     {open && (
                         <div className="flex flex-col">
-                            <span className="text-lg font-bold tracking-tight font-poppins text-slate-900 leading-tight">
+                            <Link to="/" className="text-lg font-bold tracking-tight font-poppins text-slate-900 leading-tight">
                                 FlowSpace
-                            </span>
+                            </Link>
                             <span className="text-xs font-medium text-slate-400">Platform</span>
                         </div>
                     )}

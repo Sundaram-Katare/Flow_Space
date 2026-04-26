@@ -119,7 +119,6 @@ export default function WorkspaceSidebar({
               key={item.id}
               onClick={() => {
                 setActiveItem(item.id);
-                setActiveChannel(null);
                 navigate(item.id === "chats" ? "" : item.id);
                 if (window.innerWidth < 768) setOpen(false);
               }}
@@ -172,17 +171,16 @@ export default function WorkspaceSidebar({
                     <button
                       key={channel.id}
                       onClick={() => {
-                        setActiveChannel(channel.id);
                         navigate(`chat/${channel.id}`);
                         if (window.innerWidth < 768) setOpen(false);
                       }}
                       className={`group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                        activeChannel === channel.id
+                        String(activeChannel) === String(channel.id)
                           ? "bg-slate-200 text-slate-900 shadow-sm"
                           : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                       }`}
                     >
-                      <Hash size={14} className={activeChannel === channel.id ? "text-teal-600" : "text-slate-300 group-hover:text-slate-400"} />
+                      <Hash size={14} className={String(activeChannel) === String(channel.id) ? "text-teal-600" : "text-slate-300 group-hover:text-slate-400"} />
                       <span className="truncate">{channel.name}</span>
                     </button>
                   ))}

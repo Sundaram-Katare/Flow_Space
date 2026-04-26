@@ -5,11 +5,13 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { connectSocket, disconnectSocket } from "../services/socket";
 import { getWorkspaceChannels } from "../services/chat";
-import { getWorkspaceMembers } from "../services/workspace";
+import { getWorkspaceMembers, getWorkspace } from "../services/workspace";
+import { setCurrentWorkspace } from "../../features/workspace/workspaceSlice.js";
 
 export default function WorkspaceLayout() {
   const { id: workspaceId, channelId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(window.innerWidth > 768);
   const [activeItem, setActiveItem] = useState("chats");
@@ -32,6 +34,7 @@ export default function WorkspaceLayout() {
       setActiveChannel(channelId);
     } else {
       setActiveItem("chats");
+      setActiveChannel(null);
     }
   }, [workspaceId, channelId]);
 
@@ -49,15 +52,19 @@ export default function WorkspaceLayout() {
       if (!workspaceId) return;
       try {
         setLoading(true);
-        const [channelsData, membersData] = await Promise.all([
+        const [channelsData, membersData, workspaceData] = await Promise.all([
           getWorkspaceChannels(workspaceId),
-          getWorkspaceMembers(workspaceId)
+          getWorkspaceMembers(workspaceId),
+          getWorkspace(workspaceId)
         ]);
+        
         setChannels(channelsData.channels || []);
         setMembers(membersData.members || []);
+        dispatch(setCurrentWorkspace(workspaceData.workspace));
 
         // If at workspace root, auto-navigate to first channel
-        if (!channelId && !window.location.pathname.includes("/tasks") && !window.location.pathname.includes("/docs") && channelsData.channels?.length > 0) {
+        const path = window.location.pathname;
+        if (!channelId && !path.includes("/tasks") && !path.includes("/docs") && channelsData.channels?.length > 0) {
            navigate(`chat/${channelsData.channels[0].id}`, { replace: true });
         }
       } catch (err) {
@@ -67,18 +74,19 @@ export default function WorkspaceLayout() {
       }
     };
     fetchData();
-  }, [workspaceId]);
+  }, [workspaceId, dispatch]);
 
   // Handle manual navigation when activeItem changes
   useEffect(() => {
-    if (activeItem === "tasks" && !window.location.pathname.includes("/tasks")) {
+    const path = window.location.pathname;
+    if (activeItem === "tasks" && !path.includes("/tasks")) {
       navigate("tasks");
-    } else if (activeItem === "docs" && !window.location.pathname.includes("/docs")) {
+    } else if (activeItem === "docs" && !path.includes("/docs")) {
       navigate("docs");
-    } else if (activeItem === "chats" && !channelId && channels.length > 0) {
+    } else if (activeItem === "chats" && !channelId && !path.includes("/chat") && channels.length > 0) {
       navigate(`chat/${channels[0].id}`);
     }
-  }, [activeItem, channels.length]);
+  }, [activeItem, channels.length, channelId, navigate]);
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] font-poppins overflow-hidden">
