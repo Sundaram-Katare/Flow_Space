@@ -30,7 +30,16 @@ const chatSlice = createSlice({
       state.messages = action.payload;
     },
     addMessage: (state, action) => {
-      state.messages.push(action.payload);
+      const msg = action.payload;
+      const normalizedMsg = {
+        ...msg,
+        userId: msg.userId || msg.user_id,
+        channelId: msg.channelId || msg.channel_id,
+      };
+      // Prevent duplicate messages
+      if (!state.messages.find((m) => m.id === normalizedMsg.id)) {
+        state.messages.push(normalizedMsg);
+      }
     },
     updateMessage: (state, action) => {
       const index = state.messages.findIndex((m) => m.id === action.payload.id);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -60,7 +60,17 @@ export default function ChatUI({ channel }) {
       try {
         // Fetch existing messages
         const data = await getMessages(channel.id);
-        dispatch(setMessages(data.messages || []));
+        // Normalize messages: ensure consistent camelCase field names
+        const normalizedMessages = (data.messages || []).map(msg => ({
+          id: msg.id,
+          userId: msg.userId || msg.user_id,
+          channelId: msg.channelId || msg.channel_id,
+          username: msg.username,
+          content: msg.content,
+          created_at: msg.created_at,
+          profile_picture: msg.profile_picture,
+        }));
+        dispatch(setMessages(normalizedMessages));
         
         // Join socket room
         joinChannel(channel.id);
@@ -78,10 +88,10 @@ export default function ChatUI({ channel }) {
   }, [channel?.id, dispatch]);
 
   useEffect(() => {
-    // Create handler functions that will be cleaned up
     const handleMessageReceived = (messageData) => {
       // Only add if message belongs to current channel
-      if (messageData.channelId === channel?.id) {
+      const msgChannelId = messageData.channelId || messageData.channel_id;
+      if (msgChannelId === channel?.id) {
         dispatch(addMessage(messageData));
       }
     };
@@ -89,13 +99,21 @@ export default function ChatUI({ channel }) {
     const handleUserTyping = (data) => {
       if (data.channelId === channel?.id) {
         dispatch(addTypingUser(data));
-        setTimeout(() => {
+        // Clear after 3 seconds with unique timeout per user
+        const timeoutId = setTimeout(() => {
           dispatch(removeTypingUser(data.userId));
         }, 3000);
+        return () => clearTimeout(timeoutId);
       }
     };
 
-    // Register listeners only once per channel
+    if (!channel?.id) return;
+
+    // Clear any existing listeners first
+    removeEventListener("message-received");
+    removeEventListener("user-typing");
+
+    // Register fresh listeners for this channel
     onMessageReceived(handleMessageReceived);
     onUserTyping(handleUserTyping);
 
@@ -106,17 +124,19 @@ export default function ChatUI({ channel }) {
     };
   }, [dispatch, channel?.id]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = useCallback((e) => {
     e.preventDefault();
     if (!messageText.trim() || !channel?.id) return;
     sendMessage(channel.id, messageText);
     setMessageText("");
     setIsTyping(false);
     sendStopTyping(channel.id);
-  };
+  }, [messageText, channel?.id]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setMessageText(e.target.value);
+    if (!channel?.id) return;
+    
     if (!isTyping) {
       setIsTyping(true);
       sendTyping(channel.id);
@@ -126,16 +146,16 @@ export default function ChatUI({ channel }) {
       setIsTyping(false);
       sendStopTyping(channel.id);
     }, 3000);
-  };
+  }, [channel?.id, isTyping]);
 
-  const handleDeleteMessage = async (messageId) => {
+  const handleDeleteMessage = useCallback(async (messageId) => {
     try {
       await deleteMessageAPI(messageId);
       dispatch(deleteMessageAction(messageId));
     } catch (err) {
       console.error("Delete failed:", err);
     }
-  };
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col h-full bg-white relative">
@@ -150,16 +170,16 @@ export default function ChatUI({ channel }) {
               {channel?.name || "Select a channel"}
             </h2>
             <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-              <span className="flex items-center gap-1">
-                <Users size={12} /> 12 Members
-              </span>
+              {/* <span className="flex items-center gap-1">
+                <Users size={12} /> {channel}
+              </span> */}
               <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
               <span>{channel?.description || "No description set"}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 md:gap-4">
+        {/* <div className="flex items-center gap-1 md:gap-4">
           <button className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all">
             <Phone size={20} />
           </button>
@@ -172,7 +192,7 @@ export default function ChatUI({ channel }) {
           <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
             <Info size={20} />
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Messages */}
@@ -213,9 +233,9 @@ export default function ChatUI({ channel }) {
                         </span>
                       )}
                       
-                      <div className={`relative px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                      <div className={`relative px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed transition-all ${
                         isMe 
-                          ? "bg-slate-900 text-white rounded-br-none" 
+                          ? "bg-teal-600 text-white rounded-br-none" 
                           : "bg-slate-100 text-slate-700 rounded-bl-none"
                       }`}>
                         {msg.content}

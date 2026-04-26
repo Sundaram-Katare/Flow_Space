@@ -20,8 +20,8 @@ function App() {
     if (token) {
       const loadUser = async () => {
         try {
-          const user = await getCurrentUser();
-          dispatch(setUser(user));
+          const data = await getCurrentUser();
+          dispatch(setUser(data.user));
         } catch (err) {
           console.error("Failed to load user:", err);
         }

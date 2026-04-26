@@ -110,9 +110,6 @@ export const initializeSocket = (server, app) => {
           JSON.stringify(messageData)
         );
 
-        const room = `channel:${channelId}`;
-        io.to(room).emit("message-received", messageData);
-
         console.log(`💬 Message in channel ${channelId}: ${content.substring(0, 30)}...`);
       } catch (err) {
         console.error("Send message error:", err);
