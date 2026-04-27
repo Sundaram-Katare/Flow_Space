@@ -81,10 +81,13 @@ export default function WorkspaceLayout() {
     const path = window.location.pathname;
     if (activeItem === "tasks" && !path.includes("/tasks")) {
       navigate("tasks");
+      setActiveChannel(null);
     } else if (activeItem === "docs" && !path.includes("/docs")) {
       navigate("docs");
+      setActiveChannel(null);
     } else if (activeItem === "chats" && !channelId && !path.includes("/chat") && channels.length > 0) {
       navigate(`chat/${channels[0].id}`);
+      setActiveChannel(channels[0].id);
     }
   }, [activeItem, channels.length, channelId, navigate]);
 

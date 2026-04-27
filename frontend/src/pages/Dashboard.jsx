@@ -52,14 +52,7 @@ export default function Dashboard() {
             <p className="text-teal-50 font-medium text-lg max-w-md opacity-90">
               Everything your team needs — chats, tasks, and knowledge in one place. Streamline your workflow today.
             </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <button className="px-8 py-4 bg-white text-teal-700 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all text-sm flex items-center gap-2">
-                Get Started <ArrowRight size={18} />
-              </button>
-              <button className="px-8 py-4 bg-teal-800/30 backdrop-blur-md text-white border border-white/20 rounded-2xl font-bold hover:bg-teal-800/40 transition-all text-sm">
-                Explore Features
-              </button>
-            </div>
+            
           </div>
 
           <div className="hidden lg:flex justify-end">

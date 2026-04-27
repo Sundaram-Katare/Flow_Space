@@ -32,7 +32,7 @@ export default function Workspace() {
                         exit={{ opacity: 0 }}
                         className="flex-1 overflow-hidden"
                     >
-                        <ChatUI channel={currentChannelData} />
+                        <ChatUI channel={currentChannelData} workspaceId={workspaceId} />
                     </motion.div>
                 ) : activeItem === 'tasks' ? (
                     <motion.div 

@@ -13,6 +13,7 @@ import {
   Video,
   Info,
   Trash2,
+  ArrowRight,
 } from "lucide-react";
 import {
   addMessage,
@@ -32,11 +33,14 @@ import {
   removeEventListener,
 } from "../../services/socket.js";
 import { deleteMessageAPI, getMessages } from "../../services/chat.js";
+import CreateTaskForm from "./CreateTaskForm";
 
-export default function ChatUI({ channel }) {
+export default function ChatUI({ channel, workspaceId }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { messages, typingUsers } = useSelector((state) => state.chat);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   const [messageText, setMessageText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -49,7 +53,7 @@ export default function ChatUI({ channel }) {
 
   useEffect(() => {
     if (messages.length > 0) {
-        scrollToBottom();
+      scrollToBottom();
     }
   }, [messages]);
 
@@ -71,7 +75,7 @@ export default function ChatUI({ channel }) {
           profile_picture: msg.profile_picture,
         }));
         dispatch(setMessages(normalizedMessages));
-        
+
         // Join socket room
         joinChannel(channel.id);
       } catch (err) {
@@ -136,7 +140,7 @@ export default function ChatUI({ channel }) {
   const handleInputChange = useCallback((e) => {
     setMessageText(e.target.value);
     if (!channel?.id) return;
-    
+
     if (!isTyping) {
       setIsTyping(true);
       sendTyping(channel.id);
@@ -147,6 +151,28 @@ export default function ChatUI({ channel }) {
       sendStopTyping(channel.id);
     }, 3000);
   }, [channel?.id, isTyping]);
+
+  const handleConvertToTask = (message) => {
+    setSelectedMessage(message);
+    setShowTaskModal(true);
+  };
+
+  const handleCreateTaskFromMessage = useCallback(async (title, description, priority, assignedTo) => {
+  try {
+    const { createTask } = await import("../../services/tasks.js");
+    await createTask(workspaceId, title, description, priority, assignedTo);
+    
+    // Close modal
+    setShowTaskModal(false);
+    setSelectedMessage(null);
+    
+    // Optional: Show toast notification (if your app has one)
+    console.log("✅ Task created from message successfully!");
+  } catch (err) {
+    console.error("Failed to create task:", err);
+  }
+}, [workspaceId]);
+
 
   const handleDeleteMessage = useCallback(async (messageId) => {
     try {
@@ -225,29 +251,45 @@ export default function ChatUI({ channel }) {
                         {msg.username?.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    
+
                     <div className={`group flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%] lg:max-w-[60%]`}>
                       {showAvatar && (
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
                           {isMe ? "You" : msg.username} • {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       )}
-                      
-                      <div className={`relative px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed transition-all ${
-                        isMe 
-                          ? "bg-teal-600 text-white rounded-br-none" 
-                          : "bg-slate-100 text-slate-700 rounded-bl-none"
-                      }`}>
+
+                      <div className={`relative px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed transition-all group/message ${isMe
+                        ? "bg-teal-600 text-white rounded-br-none"
+                        : "bg-slate-100 text-slate-700 rounded-bl-none"
+                        }`}>
                         {msg.content}
-                        
-                        {isMe && (
+
+                        {/* Buttons on hover */}
+                        <div className="absolute -right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover/message:opacity-100 transition-opacity flex gap-2 p-1">
+                          {/* Convert to Task - Show on ALL messages */}
                           <button
-                            onClick={() => handleDeleteMessage(msg.id)}
-                            className="absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-red-500"
+                            onClick={() => handleConvertToTask(msg)}
+                            className={`p-1.5 rounded-lg transition-all ${isMe
+                              ? "text-white hover:bg-white/20"
+                              : "text-black hover:bg-slate-200 hover:text-teal-950"
+                              }`}
+                            title="Convert to task"
                           >
-                            <Trash2 size={14} />
+                            <ArrowRight size={14} />
                           </button>
-                        )}
+
+                          {/* Delete - Only show on own messages */}
+                          {isMe && (
+                            <button
+                              onClick={() => handleDeleteMessage(msg.id)}
+                              className="p-1.5 text-white hover:bg-red-500/30 rounded-lg transition-all"
+                              title="Delete message"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -272,7 +314,7 @@ export default function ChatUI({ channel }) {
 
       {/* Input */}
       <div className="p-6 bg-white border-t border-slate-100 sticky bottom-0">
-        <form 
+        <form
           onSubmit={handleSendMessage}
           className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-2 p-2 hover:border-teal-300 transition-colors focus-within:border-teal-500 focus-within:ring-4 focus-within:ring-teal-500/10 shadow-sm"
         >
@@ -303,6 +345,21 @@ export default function ChatUI({ channel }) {
           Press <kbd className="bg-slate-100 px-1 rounded font-sans uppercase">Enter</kbd> to send
         </p>
       </div>
+
+      {/* Task Creation Modal from Message */}
+      {showTaskModal && selectedMessage && (
+        <CreateTaskForm
+          onCreate={async (title, description, priority, assignedTo) => {
+            await handleCreateTaskFromMessage(title, description, priority, assignedTo);
+          }}
+          onCancel={() => {
+            setShowTaskModal(false);
+            setSelectedMessage(null);
+          }}
+          workspaceId={workspaceId}
+          initialTitle={selectedMessage.content}
+        />
+      )}
     </div>
   );
 }

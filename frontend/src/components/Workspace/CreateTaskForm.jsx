@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import { X, Plus, User, Flag, AlignLeft, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function CreateTaskForm({ onCreate, onCancel, workspaceId }) {
-  const [title, setTitle] = useState("");
+export default function CreateTaskForm({ onCreate, onCancel, workspaceId, initialTitle = "" }) {
+  const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
   const [assignedTo, setAssignedTo] = useState("");
@@ -25,6 +25,12 @@ export default function CreateTaskForm({ onCreate, onCancel, workspaceId }) {
     };
     loadMembers();
   }, [workspaceId]);
+
+  useEffect(() => {
+  if (initialTitle) {
+    setTitle(initialTitle);
+  }
+}, [initialTitle]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -44,7 +44,7 @@ export default function WorkspaceSidebar({
   };
 
   const navItems = [
-    { id: "chats", icon: <MessageCircle size={20} />, text: "Chats" },
+    // { id: "chats", icon: <MessageCircle size={20} />, text: "Chats" },
     { id: "tasks", icon: <CheckSquare size={20} />, text: "Tasks" },
     { id: "docs", icon: <FileText size={20} />, text: "Docs" },
   ];
@@ -171,6 +171,8 @@ export default function WorkspaceSidebar({
                     <button
                       key={channel.id}
                       onClick={() => {
+                        setActiveChannel(channel.id);
+                        setActiveItem("chats");
                         navigate(`chat/${channel.id}`);
                         if (window.innerWidth < 768) setOpen(false);
                       }}

@@ -157,10 +157,10 @@ export const deleteTaskController = async (req, res) => {
     const { taskId, workspaceId } = req.params;
     const userId = req.userId;
 
-    const role = await getMemberRole(workspaceId, userId);
-    if (role !== "admin") {
-      return res.status(403).json({ error: "Only admins can delete tasks" });
-    }
+    // const role = await getMemberRole(workspaceId, userId);
+    // if (role !== "admin") {
+    //   return res.status(403).json({ error: "Only admins can delete tasks" });
+    // }
 
     await deleteTask(taskId);
 

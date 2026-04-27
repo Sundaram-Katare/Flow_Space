@@ -13,7 +13,7 @@ export default function Navbar() {
 
 
                <button
-                  onClick={() => window.open("https://github.com", "_blank")}
+                  onClick={() => window.open("https://github.com/Sundaram-Katare/Flow_Space", "_blank")}
                   className="bg-red-500 flex text-md gap-2 items-center font-poppins cursor-pointer text-white rounded-full px-2 py-1">
                   GitHub <GitCompare size={20} />
                </button>
