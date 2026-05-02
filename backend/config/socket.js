@@ -65,7 +65,7 @@ export const initializeSocket = (server, app) => {
         });
       } catch (err) {
         console.error("Join channel error:", err);
-        socket.emit("error", { message: "Failed to join channel" });
+        socket.emit("error", { message: "" });
       }
     });
 

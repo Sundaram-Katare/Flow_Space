@@ -22,7 +22,7 @@ export default function JoinWorkspace({ onClose }) {
       setCode("");
       onClose();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to join workspace");
+      setError(err.response?.data?.error || "");
     } finally {
       setLoading(false);
     }

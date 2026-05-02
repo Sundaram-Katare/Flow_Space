@@ -128,10 +128,10 @@ export default function Sidebar({ open, setOpen }) {
                                         No workspaces yet
                                     </div>
                                 )}
-                                <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold text-teal-600 hover:bg-teal-50 transition-colors uppercase tracking-widest mt-2">
+                                {/* <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold text-teal-600 hover:bg-teal-50 transition-colors uppercase tracking-widest mt-2">
                                     <Plus size={14} />
                                     <span>Create New</span>
-                                </button>
+                                </button> */}
                             </motion.div>
                         )}
                     </AnimatePresence>
