@@ -34,6 +34,7 @@ import {
 } from "../../services/socket.js";
 import { deleteMessageAPI, getMessages } from "../../services/chat.js";
 import CreateTaskForm from "./CreateTaskForm";
+import { createTask } from "../../services/tasks.js";
 
 export default function ChatUI({ channel, workspaceId }) {
   const dispatch = useDispatch();
@@ -159,7 +160,6 @@ export default function ChatUI({ channel, workspaceId }) {
 
   const handleCreateTaskFromMessage = useCallback(async (title, description, priority, assignedTo) => {
   try {
-    const { createTask } = await import("../../services/tasks.js");
     await createTask(workspaceId, title, description, priority, assignedTo);
     
     // Close modal

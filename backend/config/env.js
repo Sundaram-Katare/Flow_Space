@@ -19,7 +19,7 @@ export const env = {
     expiry: process.env.JWT_EXPIRY || '7d',
   },
   
-  frontend_url: process.env.FRONTEND_URL || 'http://localhost:5173',
+  frontend_url: process.env.FRONTEND_URL || 'https://flowspace-smoky.vercel.app',
 };
 
 export default env;
