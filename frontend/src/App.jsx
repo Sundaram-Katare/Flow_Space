@@ -11,6 +11,7 @@ import { getCurrentUser } from "./services/auth.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setUser } from "../features/auth/authSlice.js";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </div>
+    <Analytics />      
     </>
   )
 }
