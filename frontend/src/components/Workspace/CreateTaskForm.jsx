@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getWorkspaceMembers } from "../../services/workspace.js";
-import { useEffect } from "react";
 import { X, Plus, User, Flag, AlignLeft, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { generateTaskDescriptionAPI } from "../../services/ai.js";
 
-export default function CreateTaskForm({ onCreate, onCancel, workspaceId, initialTitle = "" }) {
+export default function CreateTaskForm({ onCreate, onCancel, workspaceId, initialTitle = "", isConvertingMessage = false }) {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
   const [assignedTo, setAssignedTo] = useState("");
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   // Load workspace members
   useEffect(() => {
@@ -27,10 +28,28 @@ export default function CreateTaskForm({ onCreate, onCancel, workspaceId, initia
   }, [workspaceId]);
 
   useEffect(() => {
-  if (initialTitle) {
-    setTitle(initialTitle);
-  }
-}, [initialTitle]);
+    if (initialTitle) {
+      setTitle(initialTitle);
+    }
+  }, [initialTitle]);
+
+  // AI Description generation when converting from a message
+  useEffect(() => {
+    if (isConvertingMessage && initialTitle) {
+      const fetchAIDescription = async () => {
+        setAiGenerating(true);
+        try {
+          const generatedDesc = await generateTaskDescriptionAPI(initialTitle);
+          setDescription(generatedDesc);
+        } catch (err) {
+          console.error("Failed to generate AI description:", err);
+        } finally {
+          setAiGenerating(false);
+        }
+      };
+      fetchAIDescription();
+    }
+  }, [isConvertingMessage, initialTitle]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,15 +123,24 @@ export default function CreateTaskForm({ onCreate, onCancel, workspaceId, initia
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-bold text-slate-700">
-              <AlignLeft size={16} className="text-teal-500" />
-              Description
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                <AlignLeft size={16} className="text-teal-500" />
+                Description
+              </label>
+              {aiGenerating && (
+                <div className="flex items-center gap-2 text-xs font-semibold text-teal-600 animate-pulse">
+                  <div className="w-3.5 h-3.5 border-2 border-teal-600/30 border-t-teal-600 rounded-full animate-spin" />
+                  <span>Generating with AI...</span>
+                </div>
+              )}
+            </div>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add more details about this task..."
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all font-medium"
+              placeholder={aiGenerating ? "Generating with AI..." : "Add more details about this task..."}
+              disabled={aiGenerating}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all font-medium disabled:opacity-75"
               rows="3"
             />
           </div>

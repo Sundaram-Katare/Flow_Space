@@ -358,6 +358,7 @@ export default function ChatUI({ channel, workspaceId }) {
           }}
           workspaceId={workspaceId}
           initialTitle={selectedMessage.content}
+          isConvertingMessage={true}
         />
       )}
     </div>

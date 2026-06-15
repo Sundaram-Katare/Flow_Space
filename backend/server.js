@@ -10,6 +10,7 @@ import channelRoutes from './routes/channelRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import docRoutes from './routes/docRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { initializeSocket } from './config/socket.js';
 import { initializeRedisSubscriber } from './services/redisSubscriber.js';
 import { initializeTables } from './db/init.js';
@@ -50,6 +51,7 @@ app.use("/api/channels", channelRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/docs", docRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.use((req, res, next) => {
     logger.info(`${req.method} ${req.path}`);
