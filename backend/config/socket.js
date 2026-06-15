@@ -3,19 +3,33 @@ import { verifyToken } from "../services/jwt.js";
 import { getUserById } from "../Tables/users.js";
 import redisClient from "./redis.js";
 
-const userSockets = {}; 
-const socketUsers = {}; 
+const userSockets = {};
+const socketUsers = {};
 
 export const initializeSocket = (server, app) => {
+  const allowedOrigins = [
+    "https://flowspace-smoky.vercel.app",
+    "http://localhost:5173"
+  ];
+  if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+  }
+
   const io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL || "https://flowspace-smoky.vercel.app",
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       methods: ["GET", "POST"],
       credentials: true,
     },
   });
 
-  
+
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token;
